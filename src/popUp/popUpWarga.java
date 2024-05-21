@@ -36,7 +36,6 @@ public class popUpWarga extends javax.swing.JFrame {
     protected void dataTable (){
     Object [] Baris = {"NIK", "Nama", "Agama", "NoHP", " Jenkel", "tgl", "RT","Alamat"};
     tabmode = new DefaultTableModel(null, Baris);
-//    asdas/?
     try {
         String isiTeks = tfCari.getText();
         
