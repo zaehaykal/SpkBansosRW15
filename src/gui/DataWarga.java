@@ -57,69 +57,6 @@ public class DataWarga extends javax.swing.JFrame {
     protected void letakKursor (){
     tfNik.requestFocus();
 }
-////    protected void autoID() {
-////    try {
-////        Statement stat = conn.createStatement();
-////        String sql = "SELECT no_ktp FROM warga ORDER BY no_ktp ASC";
-////        ResultSet res = stat.executeQuery(sql);
-////        int maxID = 0;
-////        while (res.next()) {
-////            String no_ktp = res.getString("no_ktp");
-////            if (no_ktp.length() >= 3) {
-////                int id = Integer.parseInt(no_ktp.substring(3));
-////                if (id > maxID) {
-////                    maxID = id;
-////                }
-////            }
-////        }
-////        maxID++; // Tambahkan 1 untuk mendapatkan ID baru
-////        String formattedID = "WRG" + String.format("%04d", maxID); // Format ID dengan 4 digit angka, misal WRG0001
-////        tfNik.setText(formattedID); // Set nilai ID di komponen JTextField
-////    } catch (Exception e) {
-////        JOptionPane.showMessageDialog(null, "Auto Number Gagal" + e);
-////    }
-//}
-private void insertData (){
-    if (tfNama.getText().equals("") || tfHP.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfaAlamat.getText().equals(""))  {
-        JOptionPane.showMessageDialog(null, "Harap masukan semua data");
-    } else if (tfNik.getText().length() != 16 ){
-        JOptionPane.showMessageDialog(null, "Panjang NIK harus 16");
-    }
-    else{
-        String sql = "INSERT INTO warga(nama,agama,no_hp,jenis_kelamin,tanggal_lahir,rt,alamat,no_ktp) VALUES (?,?,?,?,?,?,?,?)";
-        try {   
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, tfNama.getText());
-            stat.setString(2, cbAgama.getSelectedItem().toString());
-            stat.setString(3, tfHP.getText());
-            String jenisKelamin = "";
-            if (rbtnL.isSelected()) {
-                jenisKelamin = "L";
-            } else {
-                jenisKelamin = "P";
-            }
-            stat.setString(4, jenisKelamin);
-            stat.setDate(5, convertUtilDateToSqlDate(jDateChooser1.getDate()));
-            stat.setString(6, cbRT.getSelectedItem().toString());
-            stat.setString(7, tfaAlamat.getText());
-            String id = tfNik.getText();
-            int numericID = Integer.parseInt(id.substring(3));
-            stat.setInt(8, numericID); // Set nilai ID ke PreparedStatement
-            int i = stat.executeUpdate();
-            if (i > 0) {
-                JOptionPane.showMessageDialog(null, "Berhasil");
-                dataTable();
-            } else {
-                JOptionPane.showMessageDialog(null, "Gagal");
-            }
-            stat.executeUpdate();
-            fieldKosong();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
-            System.out.println(e);
-        }
-    }
-}
 
 private void updateData () {
     String sql = "UPDATE warga set nama = ?,agama = ?,no_hp = ?, jenis_kelamin = ?, tanggal_lahir = ?,rt = ?, alamat = ? where no_ktp= '"+tfNik.getText()+"'";
@@ -149,6 +86,59 @@ private void updateData () {
             System.out.println(e);
         }
     dataTable();
+}
+
+    private void insertData() {
+    if (tfNama.getText().equals("") || tfHP.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfaAlamat.getText().equals("")) {
+        JOptionPane.showMessageDialog(null, "Harap masukan semua data");
+    } else if (tfNik.getText().length() != 16) {
+        JOptionPane.showMessageDialog(null, "Panjang NIK harus 16");
+    } else {
+        try {
+            // Check if the NIK already exists
+            String checkSql = "SELECT COUNT(*) FROM warga WHERE no_ktp = ?";
+            PreparedStatement checkStat = conn.prepareStatement(checkSql);
+            checkStat.setLong(1, Long.parseLong(tfNik.getText()));
+            ResultSet rs = checkStat.executeQuery();
+            rs.next();
+            if (rs.getInt(1) > 0) {
+                JOptionPane.showMessageDialog(null, "NIK sudah ada, masukkan NIK yang berbeda");
+                return;
+            }
+
+            // If NIK does not exist, proceed with insertion
+            String sql = "INSERT INTO warga(nama, agama, no_hp, jenis_kelamin, tanggal_lahir, rt, alamat, no_ktp) VALUES (?,?,?,?,?,?,?,?)";
+            PreparedStatement stat = conn.prepareStatement(sql);
+            stat.setString(1, tfNama.getText());
+            stat.setString(2, cbAgama.getSelectedItem().toString());
+//            stat.setLong(3, Long.parseLong(tfHP.getText()));
+            try {
+                stat.setLong(3, Long.parseLong(tfHP.getText()));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Nomor HP harus berupa angka!");
+            }
+            String jenisKelamin = rbtnL.isSelected() ? "L" : "P";
+            stat.setString(4, jenisKelamin);
+            stat.setDate(5, convertUtilDateToSqlDate(jDateChooser1.getDate()));
+            stat.setString(6, cbRT.getSelectedItem().toString());
+            stat.setString(7, tfaAlamat.getText());
+            stat.setLong(8, Long.parseLong(tfNik.getText()));
+            int i = stat.executeUpdate();
+            if (i > 0) {
+                JOptionPane.showMessageDialog(null, "Berhasil");
+                dataTable();
+            } else {
+                JOptionPane.showMessageDialog(null, "Gagal");
+            }
+            fieldKosong();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!");
+            System.out.println(e);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "NIK harus berupa angka");
+            System.out.println(e);
+        }
+    }
 }
 
 private void deleteData () {
