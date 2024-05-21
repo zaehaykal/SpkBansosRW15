@@ -23,6 +23,7 @@ public class dashboard extends javax.swing.JFrame {
      */
     public dashboard() {
         initComponents();
+        setLocationRelativeTo(this);
         conn = koneksi.kon();
         userName.setText(Id.getNama_login().toString()+"!");
         System.out.println(Id.getId_login());

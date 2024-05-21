@@ -27,6 +27,7 @@ private Connection conn = new koneksi().kon();
         initComponents();
         dataTable();
         autoID();
+        setLocationRelativeTo(this);
     }
 //    protected void autoID(){
 //        try {

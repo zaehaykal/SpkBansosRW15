@@ -31,6 +31,7 @@ public class DataWarga extends javax.swing.JFrame {
         dataTable();
         letakKursor();
         fieldKosong();
+        setLocationRelativeTo(this);
 //        tfUserName.setText(Id.getNama_login().toString()+"!");
     }
 

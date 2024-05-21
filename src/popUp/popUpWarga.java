@@ -30,6 +30,7 @@ public class popUpWarga extends javax.swing.JFrame {
     public popUpWarga() {
         initComponents();
         dataTable();
+        setLocationRelativeTo(this);
         
     }
     
