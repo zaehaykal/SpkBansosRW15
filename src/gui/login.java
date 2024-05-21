@@ -157,7 +157,7 @@ public class login extends javax.swing.JFrame {
                 Id.setIzin_login(res.getString("izin"));
                 JOptionPane.showMessageDialog(null, "Login Berhasil");
                 this.dispose();
-                new dashboard().setVisible(true);
+                new dashboard().setVisible(true);//hgff
             }else{
                 JOptionPane.showMessageDialog(null, "Login Gagal");
             }
