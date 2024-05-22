@@ -53,6 +53,7 @@ public class dashboard extends javax.swing.JFrame {
         btnAlternatif = new javax.swing.JButton();
         btnSPK = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        btnKriterian1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -95,6 +96,7 @@ public class dashboard extends javax.swing.JFrame {
             }
         });
 
+        btnAlternatif.setBackground(new java.awt.Color(204, 204, 0));
         btnAlternatif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnAlternatif.png"))); // NOI18N
         btnAlternatif.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -102,6 +104,7 @@ public class dashboard extends javax.swing.JFrame {
             }
         });
 
+        btnSPK.setBackground(new java.awt.Color(153, 153, 255));
         btnSPK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnPenilaian.png"))); // NOI18N
         btnSPK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -109,7 +112,16 @@ public class dashboard extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setBackground(new java.awt.Color(204, 204, 204));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnLaporan.png"))); // NOI18N
+
+        btnKriterian1.setBackground(new java.awt.Color(255, 204, 204));
+        btnKriterian1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnStaff.png"))); // NOI18N
+        btnKriterian1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKriterian1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -117,18 +129,17 @@ public class dashboard extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(104, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnKriterian, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnPenduduk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addComponent(btnKriterian)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnPenduduk)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAlternatif)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSPK)))
+                    .addComponent(btnAlternatif)
+                    .addComponent(btnKriterian1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addComponent(btnSPK))
                 .addGap(24, 24, 24))
         );
         jPanel2Layout.setVerticalGroup(
@@ -139,11 +150,12 @@ public class dashboard extends javax.swing.JFrame {
                     .addComponent(btnPenduduk)
                     .addComponent(btnAlternatif)
                     .addComponent(btnSPK))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnKriterian)
                     .addComponent(jButton1)
-                    .addComponent(btnKriterian))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(btnKriterian1))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -162,15 +174,15 @@ public class dashboard extends javax.swing.JFrame {
                         .addGap(229, 229, 229)
                         .addComponent(jLabel4))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(358, 358, 358)
+                        .addGap(373, 373, 373)
                         .addComponent(jLabel6)
-                        .addGap(33, 33, 33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(userName))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(479, 479, 479)
                         .addComponent(jLabel7))
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,6 +241,10 @@ public class dashboard extends javax.swing.JFrame {
         new RangkingSpk().setVisible(true);
     }//GEN-LAST:event_btnSPKActionPerformed
 
+    private void btnKriterian1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKriterian1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnKriterian1ActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -269,6 +285,7 @@ public class dashboard extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlternatif;
     private javax.swing.JButton btnKriterian;
+    private javax.swing.JButton btnKriterian1;
     private javax.swing.JButton btnPenduduk;
     private javax.swing.JButton btnSPK;
     private javax.swing.JButton jButton1;

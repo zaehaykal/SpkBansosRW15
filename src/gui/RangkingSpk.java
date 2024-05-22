@@ -57,46 +57,46 @@ private Connection conn = new koneksi().kon();
 //    
 //    }
 
-protected void autoID() {
-    if (conn == null) {
-        JOptionPane.showMessageDialog(null, "Koneksi database belum diinisialisasi.");
-        return;
-    }
-
-    if (lblAutoId == null) {
-        JOptionPane.showMessageDialog(null, "Label AutoId belum diinisialisasi.");
-        return;
-    }
-
-    try {
-        Statement stat = conn.createStatement();
-        String sql = "SELECT id_staff FROM staff ORDER BY id_staff DESC LIMIT 1"; // Mengambil ID terbesar
-        ResultSet res = stat.executeQuery(sql);
-
-        String newId = "SPK0001"; // Default ID jika tabel kosong
-
-        if (res.next()) {
-            String id_staff = res.getString("id_staff");
-            int AN = Integer.parseInt(id_staff.substring(3)) + 1;
-            String NOL = "";
-
-            if (AN < 10) {
-                NOL = "000";
-            } else if (AN < 100) {
-                NOL = "00";
-            } else if (AN < 1000) {
-                NOL = "0";
-            }
-
-            newId = "SPK" + NOL + AN;
+    protected void autoID() {
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Koneksi database belum diinisialisasi.");
+            return;
         }
 
-        lblAutoId.setText(newId); // Set new ID to the label
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Auto Number Gagal: " + e.getMessage());
-        e.printStackTrace(); // Menampilkan stack trace untuk debugging lebih lanjut
+        if (lblAutoId == null) {
+            JOptionPane.showMessageDialog(null, "Label AutoId belum diinisialisasi.");
+            return;
+        }
+
+        try {
+            Statement stat = conn.createStatement();
+            String sql = "SELECT id_staff FROM staff ORDER BY id_staff DESC LIMIT 1"; // Mengambil ID terbesar
+            ResultSet res = stat.executeQuery(sql);
+
+            String newId = "SPK0001"; // Default ID jika tabel kosong
+
+            if (res.next()) {
+                String id_staff = res.getString("id_staff");
+                int AN = Integer.parseInt(id_staff.substring(3)) + 1;
+                String NOL = "";
+
+                if (AN < 10) {
+                    NOL = "000";
+                } else if (AN < 100) {
+                    NOL = "00";
+                } else if (AN < 1000) {
+                    NOL = "0";
+                }
+
+                newId = "SPK" + NOL + AN;
+            }
+
+            lblAutoId.setText(newId); // Set new ID to the label
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Auto Number Gagal: " + e.getMessage());
+            e.printStackTrace(); // Menampilkan stack trace untuk debugging lebih lanjut
+        }
     }
-}
 
     
     public void getDataWarga(String no_ktp, String nama){
