@@ -11,58 +11,28 @@ import gui.DataWarga;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.text.DecimalFormat;
 
 /**
  *
  * @author zaeha
  */
 public class RangkingSpk extends javax.swing.JFrame {
-//public String no_ktp,nama,agama,noHp,jenKel,ttl,noRt,alamat;
 private DefaultTableModel tabmode;
 private Connection conn = new koneksi().kon();
+
     /**
      * Creates new form RangkingSpk
      */
+
     public RangkingSpk() {
         initComponents();
         dataTable();
         autoID();
         setLocationRelativeTo(this);
     }
-//    protected void autoID(){
-//        try {
-//            Statement stat = conn.createStatement();
-//            String sql     = "Select id_staff from staff order by id_staff asc";
-//            ResultSet res  = stat.executeQuery(sql);
-//            jTextField2.setText("IDS0000");
-//            while (res.next()) {                
-//                String id_staff = res.getString("id_staff").substring(3);
-//                int AN = Integer.parseInt(id_staff) + 1;
-//                String NOL = "";
-//                
-//                if(AN < 10){
-//                    NOL = "000";
-//                }else if(AN < 100){
-//                    NOL = "00";
-//                }else if(AN < 1000){
-//                    NOL = "0";
-//                }else if(AN < 10000){
-//                    NOL = "";
-//                }
-//                lblAutoId.setText("IDS" + NOL + AN);
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(null, "Auto Number Gagal"+e);
-//        }
-//    
-//    }
 
     protected void autoID() {
-        if (conn == null) {
-            JOptionPane.showMessageDialog(null, "Koneksi database belum diinisialisasi.");
-            return;
-        }
-
         if (lblAutoId == null) {
             JOptionPane.showMessageDialog(null, "Label AutoId belum diinisialisasi.");
             return;
@@ -70,32 +40,32 @@ private Connection conn = new koneksi().kon();
 
         try {
             Statement stat = conn.createStatement();
-            String sql = "SELECT id_staff FROM staff ORDER BY id_staff DESC LIMIT 1"; // Mengambil ID terbesar
-            ResultSet res = stat.executeQuery(sql);
+        String sql = "SELECT id_penilaian FROM penilaianspk ORDER BY id_penilaian DESC LIMIT 1"; // Mengambil ID terbesar
+        ResultSet res = stat.executeQuery(sql);
 
-            String newId = "SPK0001"; // Default ID jika tabel kosong
+        String newId = "SPK0001"; // Default ID jika tabel kosong
 
-            if (res.next()) {
-                String id_staff = res.getString("id_staff");
-                int AN = Integer.parseInt(id_staff.substring(3)) + 1;
-                String NOL = "";
+        if (res.next()) {
+            int id_penilaian = res.getInt("id_penilaian"); // Mengambil ID penilaian terbesar
+            int AN = id_penilaian + 1;
+            String NOL = "";
 
-                if (AN < 10) {
-                    NOL = "000";
-                } else if (AN < 100) {
-                    NOL = "00";
-                } else if (AN < 1000) {
-                    NOL = "0";
-                }
-
-                newId = "SPK" + NOL + AN;
+            if (AN < 10) {
+                NOL = "000";
+            } else if (AN < 100) {
+                NOL = "00";
+            } else if (AN < 1000) {
+                NOL = "0";
             }
+
+            newId = "SPK" + NOL + AN;
+        }
 
             lblAutoId.setText(newId); // Set new ID to the label
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Auto Number Gagal: " + e.getMessage());
             e.printStackTrace(); // Menampilkan stack trace untuk debugging lebih lanjut
-        }
+            }
     }
 
     
@@ -109,11 +79,13 @@ private Connection conn = new koneksi().kon();
             System.out.println(e);
         }
     }
-    protected void dataTable(){
-        Object[] Baris = {"NIK","Nama","C1","C2","C3","C4"};
+    
+        protected void dataTable(){
+        Object[] Baris = {"NIK","Nama","C1","C2","C3","C4","C5"};
         tabmode = new DefaultTableModel(null, Baris);
         tblSPK.setModel(tabmode);
     }
+
     
     protected void hapusRow(){
         int index = tblSPK.getSelectedRow();
@@ -121,6 +93,145 @@ private Connection conn = new koneksi().kon();
         tblSPK.setModel(tabmode);
         
     }
+    
+//    protected void penilaianSPK (){
+//        try {
+//        // SQL query
+//        String penilaianSql = "INSERT INTO penilaian VALUES (?, ?, ?, ?, ?, ?)";
+//        PreparedStatement stat2 = conn.prepareStatement(penilaianSql);
+//
+//        // Get the row count of the table
+//        int t = tblSPK.getRowCount();
+//
+//        // Loop through each row
+//        for (int i = 0; i < t; i++) {
+//            String c1 = tblSPK.getValueAt(i, 2).toString();
+//            String c2 = tblSPK.getValueAt(i, 3).toString();
+//            String c3 = tblSPK.getValueAt(i, 4).toString();
+//            String c4 = tblSPK.getValueAt(i, 5).toString();
+//            String c5 = tblSPK.getValueAt(i, 6).toString();
+//            for (int j = 0; j < c1.length(); j++) {
+//                //chat gpt tolong kau buat disini
+//            }
+//
+//            // Check if the values are empty
+//            if (c1.toString().isEmpty() || c2.toString().isEmpty() || c3.toString().isEmpty() || c4.toString().isEmpty() || c5.toString().isEmpty()) {
+//                System.out.println("Masukan Semua Data!");
+//                for (int j = 0; j < i; j++) {
+//                    System.out.println("nilai C1" + c1);
+//                    System.out.println("nilai C2" + c2);
+//                    System.out.println("nilai C3" + c3);
+//                    System.out.println("nilai C4" + c4);
+//                    System.out.println("nilai C5" + c5);
+//                }
+//            } else {
+//                stat2.setString(1, c1);
+//                stat2.setString(2, c2);
+//                stat2.setString(3, c3);
+//                stat2.setString(4, c4);
+//                stat2.setString(5, c5);
+//
+//                // Execute the query
+//                stat2.executeUpdate();
+//
+//                // Display success message
+//                JOptionPane.showMessageDialog(null, "Berhasil");
+//            }
+//        }
+//    } catch (SQLException e) {
+//        // Handle SQL exceptions
+//        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+//    } catch (Exception e) {
+//        // Handle other exceptions
+//        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+//    }
+//    }
+    protected void penilaianSPK() {
+    try {
+        // SQL query
+        String penilaianSql = "INSERT INTO penilaian VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement stat2 = conn.prepareStatement(penilaianSql);
+
+        // Get the row count of the table
+        int t = tblSPK.getRowCount();
+        
+        double sumC1= 0, sumC2 = 0, sumC3 = 0, sumC4 = 0, sumC5 = 0;
+        // Loop through each row
+        for (int i = 0; i < t; i++) {
+            // Get values from the table and convert them to integers
+            int c1 = Integer.parseInt(tblSPK.getValueAt(i, 2).toString());
+            int c2 = Integer.parseInt(tblSPK.getValueAt(i, 3).toString());
+            int c3 = Integer.parseInt(tblSPK.getValueAt(i, 4).toString());
+            int c4 = Integer.parseInt(tblSPK.getValueAt(i, 5).toString());
+            int c5 = Integer.parseInt(tblSPK.getValueAt(i, 6).toString());
+            sumC1 += Math.pow(c1, 2);
+            sumC2 += Math.pow(c2, 2);
+            sumC3 += Math.pow(c3, 2);
+            sumC4 += Math.pow(c4, 2);
+            sumC5 += Math.pow(c5, 2);
+            
+            DecimalFormat df = new DecimalFormat("#.#####");
+            
+            double pembagiC1 = Math.sqrt(sumC1);
+            double pembagiC2 = Math.sqrt(sumC2);
+            double pembagiC3 = Math.sqrt(sumC3);
+            double pembagiC4 = Math.sqrt(sumC4);
+            double pembagiC5 = Math.sqrt(sumC5);
+
+            // Set the pembagi value in tfCovba
+            // Set the pembagi value in corresponding tfCovba
+            tfCovba1.setText(df.format(pembagiC1));
+            tfCovba2.setText(df.format(pembagiC2));
+            tfCovba3.setText(df.format(pembagiC3));
+            tfCovba4.setText(df.format(pembagiC4));
+            tfCovba5.setText(df.format(pembagiC5));
+
+            // Output pembagi
+            System.out.println("Pembagi C1: " + pembagiC1);
+            System.out.println("Pembagi C2: " + pembagiC2);
+            System.out.println("Pembagi C3: " + pembagiC3);
+            System.out.println("Pembagi C4: " + pembagiC4);
+            System.out.println("Pembagi C5: " + pembagiC5);
+            
+            
+            
+            // Check if the values are zero (assuming empty means zero here)
+            if (c1 == 0 || c2 == 0 || c3 == 0 || c4 == 0 || c5 == 0) {
+                System.out.println("Masukan Semua Data!");
+                for (int j = 0; j < i; j++) {
+                    System.out.println("nilai C1: " + c1);
+                    System.out.println("nilai C2: " + c2);
+                    System.out.println("nilai C3: " + c3);
+                    System.out.println("nilai C4: " + c4);
+                    System.out.println("nilai C4: " + c5);
+                }
+            } else {
+                // Set the values into the prepared statement
+//                stat2.setInt(1, c1);
+//                stat2.setInt(2, c2);
+//                stat2.setInt(3, c3);
+//                stat2.setInt(4, c4);
+//                stat2.setInt(5, c5);
+//
+//                // Execute the query
+//                stat2.executeUpdate();
+            }
+        }
+
+        // Display success message
+        JOptionPane.showMessageDialog(null, "Berhasil");
+    } catch (SQLException e) {
+        // Handle SQL exceptions
+        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+    } catch (NumberFormatException e) {
+        // Handle number format exceptions
+        JOptionPane.showMessageDialog(null, "Format angka tidak valid: " + e.getMessage());
+    } catch (Exception e) {
+        // Handle other exceptions
+        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+    }
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -134,6 +245,12 @@ private Connection conn = new koneksi().kon();
         jPanel2 = new javax.swing.JPanel();
         lblAutoId = new javax.swing.JLabel();
         btnGetID = new javax.swing.JButton();
+        tfCovba = new javax.swing.JTextField();
+        tfCovba1 = new javax.swing.JTextField();
+        tfCovba2 = new javax.swing.JTextField();
+        tfCovba3 = new javax.swing.JTextField();
+        tfCovba4 = new javax.swing.JTextField();
+        tfCovba5 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -141,6 +258,7 @@ private Connection conn = new koneksi().kon();
         tblSPK = new javax.swing.JTable();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        tfCari = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
 
@@ -163,6 +281,18 @@ private Connection conn = new koneksi().kon();
             }
         });
 
+        tfCovba.setText("jTextField1");
+
+        tfCovba1.setText("jTextField1");
+
+        tfCovba2.setText("jTextField1");
+
+        tfCovba3.setText("jTextField1");
+
+        tfCovba4.setText("jTextField1");
+
+        tfCovba5.setText("jTextField1");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -173,6 +303,16 @@ private Connection conn = new koneksi().kon();
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addComponent(btnGetID)
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tfCovba5, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCovba4, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCovba3, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCovba2, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCovba1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCovba, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,7 +321,19 @@ private Connection conn = new koneksi().kon();
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAutoId)
                     .addComponent(btnGetID))
-                .addContainerGap(466, Short.MAX_VALUE))
+                .addGap(77, 77, 77)
+                .addComponent(tfCovba, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(tfCovba1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(tfCovba2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(tfCovba3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(tfCovba4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(tfCovba5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(143, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -241,7 +393,10 @@ private Connection conn = new koneksi().kon();
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(44, 44, 44)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -251,7 +406,11 @@ private Connection conn = new koneksi().kon();
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -344,12 +503,12 @@ private Connection conn = new koneksi().kon();
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        penilaianSPK();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        hapusRow(); 
-        
+        hapusRow();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
@@ -401,5 +560,12 @@ private Connection conn = new koneksi().kon();
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblAutoId;
     private javax.swing.JTable tblSPK;
+    private javax.swing.JTextField tfCari;
+    private javax.swing.JTextField tfCovba;
+    private javax.swing.JTextField tfCovba1;
+    private javax.swing.JTextField tfCovba2;
+    private javax.swing.JTextField tfCovba3;
+    private javax.swing.JTextField tfCovba4;
+    private javax.swing.JTextField tfCovba5;
     // End of variables declaration//GEN-END:variables
 }

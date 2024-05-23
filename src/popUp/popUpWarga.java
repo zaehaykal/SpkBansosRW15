@@ -166,51 +166,8 @@ public class popUpWarga extends javax.swing.JFrame {
         String no_ktp = model.getValueAt(row, 0).toString();
         String nama = model.getValueAt(row, 1).toString();
         String agama =model.getValueAt(row, 2).toString();
-//            switch (aGama) {
-//                case "Item 1" :
-//                        DataWarga.agama.setSelectedIndex(0);
-//                        break;
-//                case "Item 2" :
-//                        cbAgama.setSelectedIndex(1);
-//                        break;
-//                case "Item 3" :
-//                        cbAgama.setSelectedIndex(2);
-//                        break;
-//                case "Item 4" :
-//                        cbAgama.setSelectedIndex(3);
-//                        break;
-//            }
         String noHP = model.getValueAt(row, 3).toString();
         String jenKel = model.getValueAt(row, 4).toString();
-//            if (jenKel.equals("L")) {
-//             rbtnL.setSelected(true);
-//        } else {
-//            rbtnP.setSelected(true);
-//        };
-//        try {
-//            java.util.Date dateKlik = new SimpleDateFormat("yyyy-MM-dd").parse((String)model.getValueAt(row, 5));
-//            jDateChooser1.setDate(dateKlik);
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(null, "ga bisa masuk tanggal nya"+e);
-//        }
-//        String rT =model.getValueAt(row, 6).toString();
-//            switch (rT) {
-//                case "Item 1" :
-//                        cbRT.setSelectedIndex(0);
-//                        break;
-//                case "Item 2" :
-//                        cbRT.setSelectedIndex(1);
-//                        break;
-//                case "Item 3" :
-//                        cbRT.setSelectedIndex(2);
-//                        break;
-//                case "Item 4" :
-//                        cbRT.setSelectedIndex(3);
-//                        break;
-//            }
-//        tfaAlamat.setText(model.getValueAt(row, 7).toString());
-//        tfNik.setText(model.getValueAt(row, 0).toString());
-//    }                                     
     rangSPK.getDataWarga(no_ktp, nama);
     this.dispose();
     }//GEN-LAST:event_tblPopWargaMouseClicked

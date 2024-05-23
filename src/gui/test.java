@@ -32,9 +32,7 @@ public class test extends javax.swing.JFrame {
      */
     public test() {
         initComponents();
-//        getData();
         dataTable();
-//        getNamaWarga();
     }
     public List<String> getNamaWarga() {
         List<String> namaWargaList = new ArrayList<>();
@@ -64,101 +62,38 @@ public class test extends javax.swing.JFrame {
         } 
         return namaWargaList;
     }
-
-//    protected void getData(){
-//            try {
-//           String sql = "SELECT * from kriteria where id_kriteria order by id_kriteria ";
-//        Statement stat = conn.createStatement();
-//        ResultSet result = stat.executeQuery(sql);
-//        while (result.next()) {
-//                Object [] obj = new Object[4];
-//                obj[1] = result.getString("Id_kriteria");
-//                obj[2] = result.getString("Id_kriteria");
-//                obj[3] = result.getString("Id_kriteria");
-//                obj[4] = result.getString("Id_kriteria");
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(rootPane, e);
-//        }
-//    }
     
-    
-    
-    
-//    protected void dataTable (){
-//        try {
-//            String sqlKriteria = "SELECT * from kriteria where id_kriteria like or nama_kriteria like order by id_kriteria asc";
-//            Statement st = conn.createStatement();
-//            ResultSet rs = st.executeQuery(sqlKriteria);
-//            while (rs.next()) {
-//                String x1 = rs.getString(1);
-//                String x2 = rs.getString(2);
-//            }
-//            
-//        } catch (Exception e) {
-//        }
-//    Object [] Baris = {"Nama", "C1", "C2", "C3"};
-////    String namaKriteria = "SELECT * from kriteria where id_kriteria or nama_kriteria order by id_kriteria asc";
-//    tabmode = new DefaultTableModel(null, Baris);
-//    try {
-//        String isiTeks = tfNik.getText();
-//        String sql = "SELECT * from kriteria where id_kriteria like '%"+isiTeks+"%' or nama_kriteria like '%"+isiTeks+"%' order by id_kriteria asc";
-//        Statement stat = conn.createStatement();
-//        ResultSet result = stat.executeQuery(sql);
-//        while (result.next()) {
-//        tabmode.addRow(new Object[]{
-//            result.getString(1),
-//        });
-//        
-//        }
-//        tblWarga.setModel(tabmode);
-//    } catch (Exception e) {
-//        JOptionPane.showMessageDialog(null,"Data Gagal Diambil"+e);
-//        System.out.println(""+e);
-//    }
-//}
-    
-    
-    protected void dataTable (){
-//        try {
-//            String sqlKriteria = "SELECT id_kriteria from kriteria ";
-//            Statement st = conn.createStatement();
-//            ResultSet rs = st.executeQuery(sqlKriteria);
-//                        
-//            while (rs.next()) {
-//                String x1 = rs.getString(1);
-//                String x2 = rs.getString(2);
-//                String x3 = rs.getString(3);
-//                Object [] obj = {x1,x2,x3};
-//                tabmode = new DefaultTableModel(null,obj);
-//            }
-//            
-//            
-//        } catch (Exception e) {
-//            System.out.println("gagal"+e);
-//        }
-            
-
-    
+    protected void dataTable() {
     try {
-        Object [] Baris = {"Nama", "C1", "C2", "C3", "C4", "C5"};
-        tabmode = new DefaultTableModel(null, Baris);
+        Object[] Baris = {"Nama", "C1", "C2", "C3", "C4", "C5"};
+        DefaultTableModel tabmode = new DefaultTableModel(null, Baris);
         String isiTeks = tfNik.getText();
-        String sql = "SELECT * from warga where no_ktp like '%"+isiTeks+"%' or nama like '%"+isiTeks+"%' order by no_ktp asc";
+        String sql = "SELECT * FROM warga WHERE nama LIKE '%" + isiTeks + "%' ORDER BY nama ASC";
         Statement stat = conn.createStatement();
         ResultSet result = stat.executeQuery(sql);
+
         while (result.next()) {
-            int nama = result.getInt("no_ktp");
-            System.out.println(nama);
-        tabmode.addRow(new Object[]{
-            
-            result.getInt(1),
-            
+            // Mengambil nomor KTP sebagai String
+            String noktp = result.getString("no_ktp");
+
+            // Konversi nomor KTP menjadi tipe long
+            long noKtpLong = Long.parseLong(noktp);
+
+            System.out.println(noktp);
+
+            // Tambahkan data ke tabel model
+            tabmode.addRow(new Object[]{
+                noKtpLong,
+                result.getString("nama"), // Misalkan nama ada di kolom ke-2
             });
         }
         tblWarga.setModel(tabmode);
     } catch (SQLException e) {
-        System.out.println(""+e);
+        System.out.println("" + e);
+        e.printStackTrace();
+    } catch (NumberFormatException e) {
+        System.out.println("Error parsing no_ktp: " + e);
+        e.printStackTrace();
     }
 }
     /**
