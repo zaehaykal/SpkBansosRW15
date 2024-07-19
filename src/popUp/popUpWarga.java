@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 package popUp;
+
 import database.koneksi;
-import gui.DataWarga;
-import gui.RangkingSpk;
+import gui.DataAlternatifPage;
+import gui.RangkingSpkPage;
 import javax.swing.*;
 import java.sql.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,9 +21,10 @@ import java.text.SimpleDateFormat;
  * @author zaeha
  */
 public class popUpWarga extends javax.swing.JFrame {
+
     private Connection conn = new koneksi().kon();
     private DefaultTableModel tabmode;
-    public RangkingSpk rangSPK = null;
+    public DataAlternatifPage warga = null;
 
     /**
      * Creates new form popUpWarga
@@ -31,37 +33,37 @@ public class popUpWarga extends javax.swing.JFrame {
         initComponents();
         dataTable();
         setLocationRelativeTo(this);
-        
-    }
-    
-    protected void dataTable (){
-    Object [] Baris = {"NIK", "Nama", "Agama", "NoHP", " Jenkel", "tgl", "RT","Alamat"};
-    tabmode = new DefaultTableModel(null, Baris);
-    try {
-        String isiTeks = tfCari.getText();
-        
-        String sql = "SELECT * from warga where no_ktp like '%"+isiTeks+"%' or nama like '%"+isiTeks+"%' order by no_ktp asc";
-        Statement stat = conn.createStatement();
-        ResultSet result = stat.executeQuery(sql);
-        while (result.next()) {
-        tabmode.addRow(new Object[]{
-            result.getString(1),
-            result.getString(2),
-            result.getString(3),
-            result.getString(4),
-            result.getString(5),
-            result.getString(6),
-            result.getString(7),
-            result.getString(8)
-        });
-        }
-        tblPopWarga.setModel(tabmode);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null,"Data Gagal Diambil"+e);
-        System.out.println(""+e);
-    }
-}
 
+    }
+
+    protected void dataTable() {
+        Object[] Baris = {"NIK", "Nama", "Agama", "NoHP", " Jenkel", "Temp. Lahir","TGL Lahir", "RT", "Alamat"};
+        tabmode = new DefaultTableModel(null, Baris);
+        try {
+            String isiTeks = tfCari.getText();
+
+            String sql = "SELECT * from warga where no_ktp like '%" + isiTeks + "%' or nama like '%" + isiTeks + "%' order by no_ktp asc";
+            Statement stat = conn.createStatement();
+            ResultSet result = stat.executeQuery(sql);
+            while (result.next()) {
+                tabmode.addRow(new Object[]{
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    result.getString(4),
+                    result.getString(5),
+                    result.getString(6),
+                    result.getString(7),
+                    result.getString(8),
+                    result.getString(9)
+                });
+            }
+            tblPopWarga.setModel(tabmode);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal Diambil" + e);
+            System.out.println("" + e);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -72,6 +74,7 @@ public class popUpWarga extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         tfCari = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -80,12 +83,19 @@ public class popUpWarga extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPopWarga = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Tw Cen MT", 0, 48)); // NOI18N
         jLabel1.setText("DATA WARGA");
 
         jButton1.setText("Cari");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, java.awt.Color.gray, java.awt.Color.gray));
 
@@ -126,33 +136,52 @@ public class popUpWarga extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1040, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 474, Short.MAX_VALUE)
+                            .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jButton1)))
+                    .addContainerGap()))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 727, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 474, Short.MAX_VALUE)
-                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -161,16 +190,24 @@ public class popUpWarga extends javax.swing.JFrame {
     private void tblPopWargaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPopWargaMouseClicked
         // TODO add your handling code here:
         int row = tblPopWarga.getSelectedRow();
-        
-        DefaultTableModel model = (DefaultTableModel)tblPopWarga.getModel();
+
+        DefaultTableModel model = (DefaultTableModel) tblPopWarga.getModel();
         String no_ktp = model.getValueAt(row, 0).toString();
         String nama = model.getValueAt(row, 1).toString();
-        String agama =model.getValueAt(row, 2).toString();
+        String agama = model.getValueAt(row, 2).toString();
         String noHP = model.getValueAt(row, 3).toString();
         String jenKel = model.getValueAt(row, 4).toString();
-    rangSPK.getDataWarga(no_ktp, nama);
-    this.dispose();
+        String tempat = model.getValueAt(row, 5).toString();
+        String tanggal = model.getValueAt(row, 6).toString();
+        
+        warga.getWarga(no_ktp,nama,tempat,tanggal);
+        this.dispose();
     }//GEN-LAST:event_tblPopWargaMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        dataTable();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -210,6 +247,7 @@ public class popUpWarga extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

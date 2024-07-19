@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7b3bf4d9-ec3a-455f-a1fa-485f32af6fae">
+	<property name="ireport.zoom" value="2.143588810000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT
+     *
+FROM
+     kriteria
+]]>
+	</queryString>
+	<field name="id_kriteria" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_kriteria" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="jenis_kriteria" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bobot_kriteria" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="detail" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="2" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="159" splitType="Stretch">
+			<staticText>
+				<reportElement x="104" y="36" width="346" height="23" uuid="ac7a3282-9f82-462c-855b-cb661b3ffe77"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KELURAHAN PANCORAN MAS]]></text>
+			</staticText>
+			<image>
+				<reportElement x="23" y="19" width="45" height="60" uuid="1d42a918-0820-47c1-817d-b4be541193d7"/>
+				<imageExpression><![CDATA["C:\\Users\\zaeha\\Downloads\\toppng.com-logo-depok-336x397 (1).jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="13" y="114" width="174" height="14" uuid="ab1ba433-62bf-459e-9bce-2853c0aa8d00"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Sekretariat RW 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="131" y="4" width="292" height="35" uuid="2baeef67-21de-47ee-8719-9798233badd8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial Black" size="20"/>
+				</textElement>
+				<text><![CDATA[RUKUN WARGA 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="104" y="59" width="346" height="20" uuid="24aa7ccf-26a6-45c6-a994-614f6586e4bd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[KECAMATAN PANCORAN MAS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="128" width="555" height="1" uuid="9db924f2-d381-4b0d-ac35-50a3e6e8968b"/>
+			</line>
+			<staticText>
+				<reportElement x="104" y="79" width="346" height="20" uuid="16f00146-16e2-4d21-b6f3-5a9050065134"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[KOTA DEPOK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="379" y="113" width="176" height="14" uuid="5a289569-b5d2-4ad1-b104-a792128ea370"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial Black" size="9"/>
+				</textElement>
+				<text><![CDATA[Kriteria Penerima Bantuan Sosial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="99" width="100" height="16" uuid="5ffc2d32-ea0d-48dc-9e5b-4e39e04c0c3a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Kode Pos 16436]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="0" width="99" height="20" backcolor="#FFFFCC" uuid="59ff8ffe-a4ef-4928-ae87-e7ca3e7e271e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nama]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="101" y="0" width="46" height="20" backcolor="#FFFFCC" uuid="831ae991-84e0-4e8c-b1f4-89bda89dd3d3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jenis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="148" y="0" width="39" height="20" backcolor="#FFFFCC" uuid="36049b6f-7142-4c49-bb1a-736f3dd20e4a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bobot]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="188" y="0" width="367" height="20" backcolor="#FFFFCC" uuid="7583e5f1-8ec3-4a45-92c2-101de1f4a090"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detail]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="8e7059dc-4832-49de-95f3-3c084e0dbe53"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="55" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="54" uuid="4487a6d3-d876-4774-b612-22fe3d2b16c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nama_kriteria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="47" height="54" uuid="f063b6bb-ff5d-4f64-87ff-e4d70ad71b02"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{jenis_kriteria}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="dbdd0958-1a2b-42b8-bdd1-467cdf293c4c"/>
+			</line>
+			<line>
+				<reportElement x="0" y="54" width="555" height="1" uuid="e9e99f9e-9b0f-42c0-9857-89763ec7031c"/>
+			</line>
+			<line>
+				<reportElement x="0" y="-20" width="1" height="73" uuid="6c405cf5-78ea-4777-a60d-941560980b68"/>
+			</line>
+			<textField>
+				<reportElement x="188" y="1" width="367" height="53" uuid="d8105c82-d219-41a4-97dc-e6e995f29e6b"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{detail}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="148" y="1" width="39" height="53" uuid="cea1cd31-061b-4291-a89f-fe741f516baf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bobot_kriteria}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="555" y="-20" width="1" height="75" uuid="6c07f872-9622-4ac4-b516-6ae64b893763"/>
+			</line>
+			<line>
+				<reportElement x="100" y="-19" width="1" height="72" uuid="ce632226-c651-45ad-a233-522c99a60f09"/>
+			</line>
+			<line>
+				<reportElement x="187" y="-19" width="1" height="73" uuid="fce4c394-c86a-4e7d-89a8-ec99bb6e569d"/>
+			</line>
+			<line>
+				<reportElement x="147" y="-19" width="1" height="73" uuid="e96a90f9-e450-4670-9873-70cb69b62be6"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="123" splitType="Stretch">
+			<staticText>
+				<reportElement x="409" y="20" width="147" height="20" uuid="4d52f5bd-eea3-46be-9099-4f653dbe589e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Mengetahui,]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="409" y="0" width="147" height="20" uuid="25a4cf64-77aa-412b-b412-0a7e130cd208"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Depok, "+new SimpleDateFormat("dd MMMM yyyy", new java.util.Locale("id")).format(new Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="409" y="103" width="147" height="20" uuid="9052e839-ab20-4c24-8b55-664a2c51cc82"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Ucam Samsudin]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

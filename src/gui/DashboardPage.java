@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package gui;
+
 import data.LoginData;
 import database.koneksi;
 import java.sql.*;
@@ -13,24 +14,25 @@ import javax.swing.*;
  *
  * @author zaeha
  */
+public class DashboardPage extends javax.swing.JFrame {
 
-public class dashboard extends javax.swing.JFrame {
     LoginData Id = new LoginData();
     Connection conn;
 
     /**
      * Creates new form Dashboard
      */
-    public dashboard() {
+    public DashboardPage() {
         initComponents();
         setLocationRelativeTo(this);
         conn = koneksi.kon();
-        userName.setText(Id.getNama_login().toString()+"!");
+        userName.setText(Id.getNama_login().toString() + "!");
         System.out.println(Id.getId_login());
         System.out.println(Id.getIzin_login());
         System.out.println(Id.getIzin_login());
-        
+
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -54,34 +56,55 @@ public class dashboard extends javax.swing.JFrame {
         btnSPK = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         btnKriterian1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1000, 900));
+        setPreferredSize(new java.awt.Dimension(1000, 824));
+        getContentPane().setLayout(null);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setLayout(null);
 
         jLabel5.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/LogoDepok400x400.png"))); // NOI18N
+        jPanel1.add(jLabel5);
+        jLabel5.setBounds(375, 16, 300, 300);
 
         jLabel3.setFont(new java.awt.Font("Tw Cen MT", 0, 36)); // NOI18N
         jLabel3.setText("SISTEM PENDUKUNG KEPUTUSAN");
+        jPanel1.add(jLabel3);
+        jLabel3.setBounds(272, 325, 498, 40);
 
         userName.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 24)); // NOI18N
         userName.setText("namaUser");
+        jPanel1.add(userName);
+        userName.setBounds(539, 430, 110, 32);
 
         jLabel4.setFont(new java.awt.Font("Tw Cen MT", 0, 36)); // NOI18N
         jLabel4.setText("UNTUK PENERIMAAN BANTUAN SOSIAL");
+        jPanel1.add(jLabel4);
+        jLabel4.setBounds(229, 374, 586, 40);
 
         jLabel6.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
         jLabel6.setText("Selamat Datang");
+        jPanel1.add(jLabel6);
+        jLabel6.setBounds(373, 435, 157, 27);
 
         jLabel7.setFont(new java.awt.Font("Tw Cen MT", 0, 36)); // NOI18N
         jLabel7.setText("RW 15");
+        jPanel1.add(jLabel7);
+        jLabel7.setBounds(470, 470, 104, 40);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
         btnPenduduk.setBackground(new java.awt.Color(102, 255, 102));
+        btnPenduduk.setForeground(new java.awt.Color(102, 255, 102));
         btnPenduduk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnWarga.png"))); // NOI18N
         btnPenduduk.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnPenduduk.setMaximumSize(new java.awt.Dimension(150, 100));
+        btnPenduduk.setMinimumSize(new java.awt.Dimension(150, 100));
+        btnPenduduk.setPreferredSize(new java.awt.Dimension(150, 100));
         btnPenduduk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPendudukActionPerformed(evt);
@@ -90,6 +113,9 @@ public class dashboard extends javax.swing.JFrame {
 
         btnKriterian.setBackground(new java.awt.Color(255, 204, 204));
         btnKriterian.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnKriteria.png"))); // NOI18N
+        btnKriterian.setMaximumSize(new java.awt.Dimension(150, 100));
+        btnKriterian.setMinimumSize(new java.awt.Dimension(150, 100));
+        btnKriterian.setPreferredSize(new java.awt.Dimension(150, 100));
         btnKriterian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKriterianActionPerformed(evt);
@@ -98,6 +124,9 @@ public class dashboard extends javax.swing.JFrame {
 
         btnAlternatif.setBackground(new java.awt.Color(204, 204, 0));
         btnAlternatif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnAlternatif.png"))); // NOI18N
+        btnAlternatif.setMaximumSize(new java.awt.Dimension(150, 100));
+        btnAlternatif.setMinimumSize(new java.awt.Dimension(150, 100));
+        btnAlternatif.setPreferredSize(new java.awt.Dimension(150, 100));
         btnAlternatif.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAlternatifActionPerformed(evt);
@@ -106,6 +135,7 @@ public class dashboard extends javax.swing.JFrame {
 
         btnSPK.setBackground(new java.awt.Color(153, 153, 255));
         btnSPK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnPenilaian.png"))); // NOI18N
+        btnSPK.setPreferredSize(new java.awt.Dimension(150, 100));
         btnSPK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSPKActionPerformed(evt);
@@ -114,9 +144,13 @@ public class dashboard extends javax.swing.JFrame {
 
         jButton1.setBackground(new java.awt.Color(204, 204, 204));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnLaporan.png"))); // NOI18N
+        jButton1.setPreferredSize(new java.awt.Dimension(150, 100));
 
         btnKriterian1.setBackground(new java.awt.Color(255, 204, 204));
         btnKriterian1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnStaff.png"))); // NOI18N
+        btnKriterian1.setMaximumSize(new java.awt.Dimension(150, 100));
+        btnKriterian1.setMinimumSize(new java.awt.Dimension(150, 100));
+        btnKriterian1.setPreferredSize(new java.awt.Dimension(150, 100));
         btnKriterian1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKriterian1ActionPerformed(evt);
@@ -127,124 +161,78 @@ public class dashboard extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(104, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnKriterian, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnPenduduk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnPenduduk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSPK, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnKriterian, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnKriterian1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAlternatif)
-                    .addComponent(btnKriterian1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(btnSPK))
-                .addGap(24, 24, 24))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(21, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnAlternatif, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPenduduk)
-                    .addComponent(btnAlternatif)
-                    .addComponent(btnSPK))
+                    .addComponent(btnPenduduk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnKriterian, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAlternatif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnKriterian)
-                    .addComponent(jButton1)
-                    .addComponent(btnKriterian1))
-                .addContainerGap(29, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnKriterian1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSPK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(375, 375, 375)
-                        .addComponent(jLabel5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(272, 272, 272)
-                        .addComponent(jLabel3))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(229, 229, 229)
-                        .addComponent(jLabel4))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(373, 373, 373)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(userName))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(479, 479, 479)
-                        .addComponent(jLabel7))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(113, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(userName))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel7)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        jPanel1.add(jPanel2);
+        jPanel2.setBounds(270, 530, 520, 260);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/backDashboard.png"))); // NOI18N
+        jPanel1.add(jLabel1);
+        jLabel1.setBounds(0, 0, 1010, 830);
+
+        getContentPane().add(jPanel1);
+        jPanel1.setBounds(-2, 0, 1010, 850);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPendudukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPendudukActionPerformed
         // TODO add your handling code here:
-        new DataWarga().setVisible(true);
-        
+        new DataWargaPage().setVisible(true);
+
     }//GEN-LAST:event_btnPendudukActionPerformed
 
     private void btnKriterianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKriterianActionPerformed
         // TODO add your handling code here:
-        new test().setVisible(true);
+        new DataKriteriaPage().setVisible(true);
     }//GEN-LAST:event_btnKriterianActionPerformed
 
     private void btnAlternatifActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlternatifActionPerformed
         // TODO add your handling code here:
-        new DataAlternatif().setVisible(true);
+        new DataAlternatifPage().setVisible(true);
     }//GEN-LAST:event_btnAlternatifActionPerformed
 
     private void btnSPKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSPKActionPerformed
         // TODO add your handling code here:
-        new RangkingSpk().setVisible(true);
+        new RangkingSpkPage().setVisible(true);
     }//GEN-LAST:event_btnSPKActionPerformed
 
     private void btnKriterian1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKriterian1ActionPerformed
         // TODO add your handling code here:
+        new DataStaffPage().setVisible(true);
     }//GEN-LAST:event_btnKriterian1ActionPerformed
-
 
     /**
      * @param args the command line arguments
@@ -263,21 +251,23 @@ public class dashboard extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DashboardPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DashboardPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DashboardPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DashboardPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new dashboard().setVisible(true);
+                new DashboardPage().setVisible(true);
             }
         });
     }
@@ -289,6 +279,7 @@ public class dashboard extends javax.swing.JFrame {
     private javax.swing.JButton btnPenduduk;
     private javax.swing.JButton btnSPK;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

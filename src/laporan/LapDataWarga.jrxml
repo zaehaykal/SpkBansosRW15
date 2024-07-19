@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8aacd931-d5a1-4de1-8cea-5de09ce1d85a">
+	<property name="ireport.zoom" value="1.7715610000000144"/>
+	<property name="ireport.x" value="500"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    warga.`no_ktp` AS warga_no_ktp,
+    warga.`nama` AS warga_nama,
+    warga.`agama` AS warga_agama,
+    warga.`no_hp` AS warga_no_hp,
+    warga.`jenis_kelamin` AS warga_jenis_kelamin,
+    warga.`t_lahir` AS warga_t_lahir,
+    warga.`tanggal_lahir` AS warga_tanggal_lahir,
+    warga.`rt` AS warga_rt,
+    warga.`alamat` AS warga_alamat
+FROM
+    `warga` warga
+WHERE
+    ($P{p1} IS NULL OR $P{p1} = '' OR warga.`no_ktp` = $P{p1})]]>
+	</queryString>
+	<field name="warga_no_ktp" class="java.lang.Long"/>
+	<field name="warga_nama" class="java.lang.String"/>
+	<field name="warga_agama" class="java.lang.String"/>
+	<field name="warga_no_hp" class="java.lang.Long"/>
+	<field name="warga_jenis_kelamin" class="java.lang.String"/>
+	<field name="warga_t_lahir" class="java.lang.String"/>
+	<field name="warga_tanggal_lahir" class="java.sql.Date"/>
+	<field name="warga_rt" class="java.lang.String"/>
+	<field name="warga_alamat" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="10" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="161" splitType="Stretch">
+			<staticText>
+				<reportElement x="626" y="127" width="176" height="14" uuid="6ae10e53-d34b-4542-9503-e3a225a0de87"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial Black" size="9"/>
+				</textElement>
+				<text><![CDATA[DATA WARGA RW 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="127" width="174" height="14" uuid="1c7ffdcb-6f8e-4da4-a03c-dfeaf9f50b95"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" size="10"/>
+				</textElement>
+				<text><![CDATA[Sekretariat RW 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="228" y="44" width="346" height="24" uuid="07e52816-f1a1-4f14-ba54-c02c4c67983b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KELURAHAN PANCORAN MAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="228" y="68" width="346" height="20" uuid="8ed5b024-37a3-4069-8fbf-da5a83608233"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="16"/>
+				</textElement>
+				<text><![CDATA[KECAMATAN PANCORAN MAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="228" y="88" width="346" height="20" uuid="59c4635f-8cae-4d2d-aa04-2241f4dc8184"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="16"/>
+				</textElement>
+				<text><![CDATA[KOTA DEPOK]]></text>
+			</staticText>
+			<image>
+				<reportElement x="130" y="6" width="82" height="102" uuid="b3ecad5f-7548-4216-8b5a-534062967470"/>
+				<imageExpression><![CDATA["C:\\Users\\zaeha\\Downloads\\toppng.com-logo-depok-336x397 (1).jpg"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="141" width="802" height="1" uuid="2b82ab1f-d594-42f3-9178-83d51667ee05"/>
+			</line>
+			<staticText>
+				<reportElement x="255" y="12" width="292" height="35" uuid="9181f3cd-233e-4c87-88c9-e58b4136f441"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUKUN WARGA 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="108" width="100" height="20" uuid="6032da75-740e-4836-b3ea-408a8816b49d"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Kode Pos 16436]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="100" height="20" backcolor="#CCCCFF" uuid="cb98da3d-5bdd-4355-89c3-bd9875b102e4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nama]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="100" y="0" width="128" height="20" backcolor="#CCCCFF" uuid="a308a484-0d78-4037-9b11-386cb1c1a8a8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="229" y="0" width="25" height="20" backcolor="#CCCCFF" uuid="3fb1f910-03de-4366-8c38-20d463f45b55"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JenKel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="255" y="0" width="100" height="20" backcolor="#CCCCFF" uuid="ae5e14c5-6aed-49c1-82d2-584a6fc422f3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tempat Lahir]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="356" y="0" width="84" height="20" backcolor="#CCCCFF" uuid="e803a2c0-cdd7-4c52-b257-1a1d27a36ecc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tanggal Lahir]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="441" y="0" width="100" height="20" backcolor="#CCCCFF" uuid="ceefb73b-08a8-4a04-914f-076280c0f71c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agama]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="541" y="0" width="44" height="20" backcolor="#CCCCFF" uuid="0bf68402-7407-47da-acfe-fc422550db4e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="586" y="0" width="216" height="20" backcolor="#CCCCFF" uuid="083784c1-f548-4f0e-a3eb-f4d926710cbe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Alamat]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" uuid="e1062aa5-8d05-4b12-ac0d-ec25f721008e"/>
+			</line>
+			<line>
+				<reportElement x="0" y="19" width="802" height="1" uuid="8bc23508-84e9-4814-907e-67503f53f695"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="7bfeb437-441d-4add-8a57-cc60ca483c78"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+					<paragraph leftIndent="10" rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_nama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="128" height="20" uuid="909c86e4-f916-4b1f-ba45-c06f74db1227"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+					<paragraph leftIndent="10" rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_no_ktp}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="228" y="0" width="26" height="20" uuid="d498f7e3-1aa4-47d8-998c-e013f432a8c6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_jenis_kelamin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="255" y="0" width="99" height="20" uuid="67de9bd0-d4e9-4c44-9907-7db010272bc6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+					<paragraph leftIndent="10" rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_t_lahir}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="355" y="0" width="85" height="20" uuid="0bfc41d0-9ffa-41bb-9715-9180619f555e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+					<paragraph leftIndent="10" rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_tanggal_lahir}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="0" width="100" height="20" uuid="8ce0e8de-b54a-4516-963c-4244def75848"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+					<paragraph leftIndent="10" rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_agama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="541" y="0" width="44" height="20" uuid="22c60d28-d2eb-417a-b8e2-fd03ff8e9acc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+					<paragraph leftIndent="10" rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_rt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="585" y="0" width="217" height="20" uuid="39b587de-3885-4184-9846-e0cf8e3489bc"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Serif"/>
+					<paragraph leftIndent="10" rightIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{warga_alamat}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="19" width="802" height="1" uuid="54c07ecc-5052-4317-9610-40f2296fa744"/>
+			</line>
+			<line>
+				<reportElement x="0" y="-19" width="1" height="39" uuid="e59bb2ca-20db-4619-9bfe-b3ec08b418ef"/>
+			</line>
+			<line>
+				<reportElement x="100" y="-19" width="1" height="38" uuid="5c321303-1759-4092-b29f-32a4a1862868"/>
+			</line>
+			<line>
+				<reportElement x="228" y="-19" width="1" height="38" uuid="9278c097-9ded-4052-b2cf-27fc7423e96a"/>
+			</line>
+			<line>
+				<reportElement x="254" y="-19" width="1" height="38" uuid="91b9cfcc-c1be-47f8-bb10-698fb89d5e46"/>
+			</line>
+			<line>
+				<reportElement x="355" y="-19" width="1" height="38" uuid="ab72a77a-4eb1-4341-88aa-0948987ecc92"/>
+			</line>
+			<line>
+				<reportElement x="440" y="-19" width="1" height="38" uuid="b847c030-1e26-4bbd-84c1-462f29b92317"/>
+			</line>
+			<line>
+				<reportElement x="541" y="-19" width="1" height="38" uuid="58131e5f-b22d-4c19-afda-d07dd9de116e"/>
+			</line>
+			<line>
+				<reportElement x="585" y="-19" width="1" height="39" uuid="30546783-136d-4034-97d9-282deb5aef3f"/>
+			</line>
+			<line>
+				<reportElement x="801" y="-19" width="1" height="39" uuid="955c7de5-e0c5-4446-b8d7-4d4551ea92f2"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="15" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="109" splitType="Stretch">
+			<textField>
+				<reportElement x="654" y="0" width="147" height="20" uuid="5f51a391-27ef-43c3-8d44-927b2d963d02"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Depok, "+new SimpleDateFormat("dd MMMM yyyy", new java.util.Locale("id")).format(new Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="654" y="20" width="147" height="20" uuid="d7b9a68b-0e31-4b50-bd28-58dc6a6f2ff3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Mengetahui,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="654" y="89" width="147" height="20" uuid="d6829425-6a09-4ff3-acf4-ffd607ecdf09"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Ucam Samsudin]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch"/>
+	</summary>
+</jasperReport>

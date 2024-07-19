@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6829185c-6aba-4f3c-8848-33331f9a6ce1">
+	<property name="ireport.zoom" value="2.1435888100000033"/>
+	<property name="ireport.x" value="141"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Tw Cen MT" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<queryString>
+		<![CDATA[SELECT
+     staff_rw.`id` AS staff_rw_id,
+     staff_rw.`nama` AS staff_rw_nama,
+     staff_rw.`role` AS staff_rw_role,
+     staff_rw.`no_hp` AS staff_rw_no_hp,
+     staff_rw.`username` AS staff_rw_username,
+     staff_rw.`password` AS staff_rw_password,
+     staff_rw.`lokasi` AS staff_rw_lokasi
+FROM
+     `staff_rw` staff_rw]]>
+	</queryString>
+	<field name="staff_rw_id" class="java.lang.Integer"/>
+	<field name="staff_rw_nama" class="java.lang.String"/>
+	<field name="staff_rw_role" class="java.lang.String"/>
+	<field name="staff_rw_no_hp" class="java.lang.Long"/>
+	<field name="staff_rw_username" class="java.lang.String"/>
+	<field name="staff_rw_password" class="java.lang.String"/>
+	<field name="staff_rw_lokasi" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="96" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="146" y="13" width="263" height="33" uuid="28b43b45-00ea-4f30-9628-1fdff6ebb689"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tw Cen MT"/>
+				</textElement>
+				<text><![CDATA[DATA STAFF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="77" y="46" width="400" height="22" uuid="36da4820-1033-4c33-84d8-c534a5687fcd"/>
+				<textElement textAlignment="Center">
+					<font fontName="Tw Cen MT"/>
+				</textElement>
+				<text><![CDATA[RW 15 KELURAHAN PANCORAN MAS, KOTA DEPOK]]></text>
+			</staticText>
+			<image>
+				<reportElement x="486" y="13" width="47" height="50" uuid="864e3c9c-03d6-43e8-82a5-0b3c6bcc19c9"/>
+				<imageExpression><![CDATA["C:\\Users\\zaeha\\Documents\\NetBeansProjects\\spk_bansos_rw15\\src\\image\\LogoDepok400x400.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="555" height="1" uuid="be66561b-b652-4e91-b218-63ef1e381b5f"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="0" y="19" width="92" height="15" uuid="97a9708b-355a-4b4d-a947-6a8a05099b4b"/>
+				<textElement>
+					<font fontName="Tw Cen MT"/>
+				</textElement>
+				<text><![CDATA[ID STAFF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="92" y="19" width="92" height="15" uuid="79c69484-6d11-4089-b236-05d5d39de0d1"/>
+				<textElement>
+					<font fontName="Tw Cen MT"/>
+				</textElement>
+				<text><![CDATA[NAMA STAFF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="184" y="19" width="92" height="15" uuid="42adc4b7-2250-42de-9dc3-dd0dd5429d5c"/>
+				<textElement>
+					<font fontName="Tw Cen MT"/>
+				</textElement>
+				<text><![CDATA[ROLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="276" y="20" width="122" height="15" uuid="df16986d-7b91-42ef-b910-fb9cfe842349"/>
+				<textElement>
+					<font fontName="Tw Cen MT"/>
+				</textElement>
+				<text><![CDATA[NO. HP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="398" y="21" width="122" height="15" uuid="de76b7c5-cc9a-4ea6-bac6-72bda12495fa"/>
+				<textElement>
+					<font fontName="Tw Cen MT"/>
+				</textElement>
+				<text><![CDATA[LOKASI TUGAS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="38" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="92" height="20" uuid="ae0fec62-b033-4e04-8b15-5a7879c5e4f0"/>
+				<textFieldExpression><![CDATA[$F{staff_rw_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="0" width="92" height="20" uuid="f5d1c1ca-744f-43b6-91aa-bbd9270552f3"/>
+				<textFieldExpression><![CDATA[$F{staff_rw_nama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="184" y="0" width="92" height="20" uuid="e9df924f-040a-40c8-92f3-a7481ec40bb8"/>
+				<textFieldExpression><![CDATA[$F{staff_rw_role}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="0" width="122" height="20" uuid="c0ced83a-87b6-432b-8e10-bb0751885a7b"/>
+				<textFieldExpression><![CDATA[$F{staff_rw_no_hp}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="398" y="0" width="122" height="20" uuid="1020fcb2-81ee-472e-acac-63ab93ba73e4"/>
+				<textFieldExpression><![CDATA[$F{staff_rw_lokasi}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="78e48680-f26c-432e-bf82-2b0fd58b88f8"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="8ed57ba1-e213-4e0f-a05c-3943fd5085b3"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tw Cen MT" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="26b47e8b-e3d6-4b9a-9133-1ef3349a071b"/>
+				<textElement>
+					<font fontName="Tw Cen MT" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="c697a2a3-f430-4e70-8be2-403a7ea3bd26"/>
+				<textElement>
+					<font fontName="Tw Cen MT" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

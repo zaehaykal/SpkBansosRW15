@@ -13,20 +13,26 @@ import javax.swing.JOptionPane;
 import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.Date;
+import java.io.File;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.view.JasperViewer;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author zaeha
  */
-public class DataWarga extends javax.swing.JFrame {
+public class DataWargaPage extends javax.swing.JFrame {
+
     private Connection conn = new koneksi().kon();
-    private DefaultTableModel tabmode; 
+    private DefaultTableModel tabmode;
     LoginData Id = new LoginData();
-    
 
     /**
      * Creates new form DataWarga
      */
-    public DataWarga() {
+    public DataWargaPage() {
         initComponents();
         dataTable();
         letakKursor();
@@ -35,15 +41,15 @@ public class DataWarga extends javax.swing.JFrame {
 //        tfUserName.setText(Id.getNama_login().toString()+"!");
     }
 
-    public static java.sql.Date convertUtilDateToSqlDate(java.util.Date date){
-        if(date != null) {
+    public static java.sql.Date convertUtilDateToSqlDate(java.util.Date date) {
+        if (date != null) {
             java.sql.Date sqlDate = new java.sql.Date(date.getTime());
             return sqlDate;
         }
         return null;
     }
-    
-    protected void fieldKosong (){
+
+    protected void fieldKosong() {
         tfNik.setText("");
         tfCari.setText("");
         tfHP.setText("");
@@ -52,15 +58,16 @@ public class DataWarga extends javax.swing.JFrame {
         cbAgama.setSelectedIndex(0);
         cbRT.setSelectedIndex(0);
         tfNama.setText("");
+        tfTLahir.setText("");
     }
-    
-    protected void letakKursor (){
-    tfNik.requestFocus();
-}
 
-private void updateData () {
-    String sql = "UPDATE warga set nama = ?,agama = ?,no_hp = ?, jenis_kelamin = ?, tanggal_lahir = ?,rt = ?, alamat = ? where no_ktp= '"+tfNik.getText()+"'";
-        try {   
+    protected void letakKursor() {
+        tfNik.requestFocus();
+    }
+
+    private void updateData() {
+        String sql = "UPDATE warga set nama = ?,agama = ?,no_hp = ?, jenis_kelamin = ?, tanggal_lahir = ?,rt = ?, alamat = ? where no_ktp= '" + tfNik.getText() + "'";
+        try {
             PreparedStatement stat = conn.prepareStatement(sql);
             stat.setString(1, tfNama.getText());
             stat.setString(2, cbAgama.getSelectedItem().toString());
@@ -75,144 +82,233 @@ private void updateData () {
             stat.setDate(5, convertUtilDateToSqlDate(jDateChooser1.getDate()));
             stat.setString(6, cbRT.getSelectedItem().toString());
             stat.setString(7, tfaAlamat.getText());
-            
+
             JOptionPane.showMessageDialog(null, "Data Berhasil Diubah!");
-            
+
             stat.executeUpdate();
             fieldKosong();
             letakKursor();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e);
             System.out.println(e);
-        }
-    dataTable();
-}
-
-    private void insertData() {
-    if (tfNama.getText().equals("") || tfHP.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfaAlamat.getText().equals("")) {
-        JOptionPane.showMessageDialog(null, "Harap masukan semua data");
-    } else if (tfNik.getText().length() != 16) {
-        JOptionPane.showMessageDialog(null, "Panjang NIK harus 16");
-    } else {
-        try {
-            // Check if the NIK already exists
-            String checkSql = "SELECT COUNT(*) FROM warga WHERE no_ktp = ?";
-            PreparedStatement checkStat = conn.prepareStatement(checkSql);
-            checkStat.setLong(1, Long.parseLong(tfNik.getText()));
-            ResultSet rs = checkStat.executeQuery();
-            rs.next();
-            if (rs.getInt(1) > 0) {
-                JOptionPane.showMessageDialog(null, "NIK sudah ada, masukkan NIK yang berbeda");
-                return;
-            }
-
-            // If NIK does not exist, proceed with insertion
-            String sql = "INSERT INTO warga(nama, agama, no_hp, jenis_kelamin, tanggal_lahir, rt, alamat, no_ktp) VALUES (?,?,?,?,?,?,?,?)";
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, tfNama.getText());
-            stat.setString(2, cbAgama.getSelectedItem().toString());
-//            stat.setLong(3, Long.parseLong(tfHP.getText()));
-            try {
-                stat.setLong(3, Long.parseLong(tfHP.getText()));
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Nomor HP harus berupa angka!");
-            }
-            String jenisKelamin = rbtnL.isSelected() ? "L" : "P";
-            stat.setString(4, jenisKelamin);
-            stat.setDate(5, convertUtilDateToSqlDate(jDateChooser1.getDate()));
-            stat.setString(6, cbRT.getSelectedItem().toString());
-            stat.setString(7, tfaAlamat.getText());
-            stat.setLong(8, Long.parseLong(tfNik.getText()));
-            int i = stat.executeUpdate();
-            if (i > 0) {
-                JOptionPane.showMessageDialog(null, "Berhasil");
-                dataTable();
-            } else {
-                JOptionPane.showMessageDialog(null, "Gagal");
-            }
-            fieldKosong();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!");
-            System.out.println(e);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "NIK harus berupa angka");
-            System.out.println(e);
-        }
-    }
-}
-
-private void deleteData () {
-    int option = JOptionPane.showConfirmDialog(null, "Yakin ?", "Hapus '"+tfNama.getText()+"' ", JOptionPane.YES_NO_OPTION);
-    if (option == 0) {
-        String sql = "DELETE FROM warga where no_ktp = '"+tfNik.getText()+"' ";
-        try {
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.executeUpdate();
-            fieldKosong();
-            letakKursor();
-            JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus!");
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
         }
         dataTable();
     }
-}
-//protected void autoID(){
-//        try {
-//            Statement stat = conn.createStatement();
-//            String sql     = "Select no_ktp from warga order by no_ktp asc";
-//            ResultSet res  = stat.executeQuery(sql);
-//            tfNik.setText("WRG0001");
-//            while (res.next()) {                
-//                String no_ktp = res.getString("no_ktp").substring(3);
-//                int AN = Integer.parseInt(no_ktp) + 1;
-//                String NOL = "";
-//                
-//                if(AN < 10){
-//                    NOL = "000";
-//                }else if(AN < 100){
-//                    NOL = "00";
-//                }else if(AN < 1000){
-//                    NOL = "0";
-//                }else if(AN < 10000){
-//                    NOL = "";
-//                }
-//                
-//                tfNik.setText("WRG" + NOL + AN);
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(null, "Auto Number Gagal"+e);
-//        }
-//    
-//    }
 
+    private void insertData() {
+        if (tfNama.getText().equals("") || tfHP.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfaAlamat.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Harap masukan semua data");
+        } else if (tfNik.getText().length() != 16) {
+            JOptionPane.showMessageDialog(null, "Panjang NIK harus 16");
+        } else {
+            try {
+                // Check if the NIK already exists
+                String checkSql = "SELECT COUNT(*) FROM warga WHERE no_ktp = ?";
+                PreparedStatement checkStat = conn.prepareStatement(checkSql);
+                checkStat.setLong(1, Long.parseLong(tfNik.getText()));
+                ResultSet rs = checkStat.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    JOptionPane.showMessageDialog(null, "NIK sudah ada, masukkan NIK yang berbeda");
+                    return;
+                }
 
-    protected void dataTable (){
-    Object [] Baris = {"NIK", "Nama", "Agama", "NoHP", " Jenkel", "tgl", "RT","Alamat"};
-    tabmode = new DefaultTableModel(null, Baris);
-    try {
-        String isiTeks = tfCari.getText();
-        String sql = "SELECT * from warga where no_ktp like '%"+isiTeks+"%' or nama like '%"+isiTeks+"%' order by no_ktp asc";
-        Statement stat = conn.createStatement();
-        ResultSet result = stat.executeQuery(sql);
-        while (result.next()) {
-        tabmode.addRow(new Object[]{
-            result.getString(1),
-            result.getString(2),
-            result.getString(3),
-            result.getString(4),
-            result.getString(5),
-            result.getString(6),
-            result.getString(7),
-            result.getString(8)
-        });
+                // If NIK does not exist, proceed with insertion
+                String sql = "INSERT INTO warga(nama, agama, no_hp, jenis_kelamin, t_lahir, tanggal_lahir, rt, alamat, no_ktp) VALUES (?,?,?,?,?,?,?,?,?)";
+                PreparedStatement stat = conn.prepareStatement(sql);
+                stat.setString(1, tfNama.getText());
+                stat.setString(2, cbAgama.getSelectedItem().toString());
+                try {
+                    stat.setLong(3, Long.parseLong(tfHP.getText()));
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Nomor HP harus berupa angka!");
+                }
+                String jenisKelamin = rbtnL.isSelected() ? "L" : "P";
+                stat.setString(4, jenisKelamin);
+                stat.setString(5, tfTLahir.getText());
+                stat.setDate(6, convertUtilDateToSqlDate(jDateChooser1.getDate()));
+                stat.setString(7, cbRT.getSelectedItem().toString());
+                stat.setString(8, tfaAlamat.getText());
+                stat.setLong(9, Long.parseLong(tfNik.getText()));
+                int i = stat.executeUpdate();
+                if (i > 0) {
+                    JOptionPane.showMessageDialog(null, "Berhasil");
+                    dataTable();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Gagal");
+                }
+                fieldKosong();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!");
+                System.out.println(e);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "NIK harus berupa angka");
+                System.out.println(e);
+            }
         }
-        tblWarga.setModel(tabmode);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null,"Data Gagal Diambil"+e);
-        System.out.println(""+e);
     }
-}
+
+    private void deleteData() {
+        int option = JOptionPane.showConfirmDialog(null, "Yakin ?", "Hapus '" + tfNama.getText() + "' ", JOptionPane.YES_NO_OPTION);
+        if (option == 0) {
+            String sql = "DELETE FROM warga where no_ktp = '" + tfNik.getText() + "' ";
+            try {
+                PreparedStatement stat = conn.prepareStatement(sql);
+                stat.executeUpdate();
+                fieldKosong();
+                letakKursor();
+                JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus!");
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+            dataTable();
+        }
+    }
+
+    protected void dataTable() {
+        Object[] Baris = {"NIK", "Nama", "Agama", "NoHP", " Jenkel", "TTL", "Tempat Lahir", "RT", "Alamat"};
+        tabmode = new DefaultTableModel(null, Baris);
+        try {
+            String isiTeks = tfCari.getText();
+            String sql = "SELECT * from warga where no_ktp like '%" + isiTeks + "%' or nama like '%" + isiTeks + "%' order by no_ktp asc";
+            Statement stat = conn.createStatement();
+            ResultSet result = stat.executeQuery(sql);
+            while (result.next()) {
+                tabmode.addRow(new Object[]{
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    result.getString(4),
+                    result.getString(5),
+                    result.getString(6),
+                    result.getString(7),
+                    result.getString(8),
+                    result.getString(9)
+                });
+            }
+            tblWarga.setModel(tabmode);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal Diambil" + e);
+            System.out.println("" + e);
+        }
+    }
+
+    void cetakData() {
+        String reportSrcFile = "src/laporan/LapDataWarga.jrxml"; // Path ke file jrxml Anda
+        String userHome = System.getProperty("user.home"); // Mendapatkan direktori home pengguna
+        String reportDestDir = userHome + "\\Downloads\\";  // Directory untuk output file PDF
+        String baseFileName = "LaporanDataWargaRW15";
+        String fileExtension = ".pdf";
+
+        // Mengambil nilai dari tfNik
+        String nik = tfNik.getText();
+        if (nik == null || nik.trim().isEmpty()) {
+            nik = null; // Atur parameter menjadi null jika kosong
+        }
+
+        try {
+            Connection conn = koneksi.kon();
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportSrcFile);
+
+            // Membuat parameter map
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("p1", nik);  // Mengatur parameter "p1"
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);
+
+            // Cek apakah laporan memiliki halaman
+            if (jasperPrint.getPages().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Tidak ada data untuk ditampilkan.");
+                return;
+            }
+
+            JasperViewer.viewReport(jasperPrint, false);
+
+            // Generate the destination file path
+            String reportDestFile = generateUniqueFileName(reportDestDir, baseFileName, fileExtension);
+            JasperExportManager.exportReportToPdfFile(jasperPrint, reportDestFile);
+
+            JOptionPane.showMessageDialog(null, "Laporan berhasil dibuat di: " + reportDestFile);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Gagal membuat laporan: " + e.getMessage());
+        }
+    }
+
+    private String generateUniqueFileName(String dir, String baseName, String extension) {
+        File file = new File(dir + baseName + extension);
+        int count = 1;
+        while (file.exists()) {
+            file = new File(dir + baseName + "(" + count + ")" + extension);
+            count++;
+        }
+        return file.getAbsolutePath();
+    }
+
+    private void klikMouse() {
+        int row = tblWarga.getSelectedRow();
+//        DefaultTableModel model = (DefaultTableModel) tblWarga.getModel();
+
+        tfNama.setText(tabmode.getValueAt(row, 1).toString());
+        String aGama = tabmode.getValueAt(row, 2).toString();
+        switch (aGama) {
+            case "Islam":
+                cbAgama.setSelectedIndex(0);
+                break;
+            case "Kristen":
+                cbAgama.setSelectedIndex(1);
+                break;
+            case "Khatolik":
+                cbAgama.setSelectedIndex(2);
+                break;
+            case "Item 4":
+                cbAgama.setSelectedIndex(3);
+                break;
+        }
+        tfHP.setText(tabmode.getValueAt(row, 3).toString());
+
+        String jenKel = tabmode.getValueAt(row, 4).toString();
+        if (jenKel.equals("L")) {
+            rbtnL.setSelected(true);
+        } else {
+            rbtnP.setSelected(true);
+        };
+        tfTLahir.setText(tabmode.getValueAt(row, 5).toString());
+        try {
+            Date dateKlik = new SimpleDateFormat("yyyy-MM-dd").parse((String) tabmode.getValueAt(row, 6));
+            jDateChooser1.setDate(dateKlik);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "ga bisa masuk tanggal nya" + e);
+        }
+        String rT = tabmode.getValueAt(row, 7).toString();
+        switch (rT) {
+            case "1":
+                cbRT.setSelectedIndex(0);
+                break;
+            case "2":
+                cbRT.setSelectedIndex(1);
+                break;
+            case "3":
+                cbRT.setSelectedIndex(2);
+                break;
+            case "4":
+                cbRT.setSelectedIndex(3);
+                break;
+            case "5":
+                cbRT.setSelectedIndex(3);
+                break;
+            case "6":
+                cbRT.setSelectedIndex(3);
+                break;
+            case "7":
+                cbRT.setSelectedIndex(3);
+                break;
+        }
+        tfaAlamat.setText(tabmode.getValueAt(row, 8).toString());
+        tfNik.setText(tabmode.getValueAt(row, 0).toString());
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -250,6 +346,8 @@ private void deleteData () {
         btnReset = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        tfTLahir = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblWarga = new javax.swing.JTable();
@@ -260,7 +358,8 @@ private void deleteData () {
         tfUserName = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Rukun Warga 15\n");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -351,11 +450,11 @@ private void deleteData () {
 
         cbAgama.setBackground(new java.awt.Color(204, 231, 231));
         cbAgama.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        cbAgama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbAgama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Islam", "Kristen", "Khatolik", "Buddha", "Hindhu" }));
 
         cbRT.setBackground(new java.awt.Color(204, 231, 231));
         cbRT.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
-        cbRT.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbRT.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7" }));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -439,6 +538,17 @@ private void deleteData () {
                 .addGap(63, 63, 63))
         );
 
+        jLabel11.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 18)); // NOI18N
+        jLabel11.setText("Tempat Lahir");
+
+        tfTLahir.setBackground(new java.awt.Color(204, 231, 231));
+        tfTLahir.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 16)); // NOI18N
+        tfTLahir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfTLahirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -452,21 +562,23 @@ private void deleteData () {
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6)
-                    .addComponent(jLabel7))
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel11))
                 .addGap(49, 49, 49)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tfNama, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tfTLahir, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tfNama)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(rbtnL)
                         .addGap(18, 18, 18)
                         .addComponent(rbtnP))
-                    .addComponent(cbAgama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbRT, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfHP, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                    .addComponent(tfNik, javax.swing.GroupLayout.Alignment.LEADING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(cbAgama, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbRT, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfHP)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                    .addComponent(tfNik))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -477,37 +589,41 @@ private void deleteData () {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(tfNik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(tfNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(cbAgama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(tfHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(rbtnL)
                         .addComponent(rbtnP)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11)
+                    .addComponent(tfTLahir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(cbRT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(59, 59, 59))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -562,7 +678,7 @@ private void deleteData () {
                     .addComponent(jScrollPane2)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 262, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -601,12 +717,6 @@ private void deleteData () {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -614,10 +724,18 @@ private void deleteData () {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tfUserName)
                 .addGap(50, 50, 50))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(689, 689, 689))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(52, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(68, 68, 68)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(689, 689, 689))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -628,12 +746,13 @@ private void deleteData () {
                     .addComponent(jLabel10)
                     .addComponent(tfUserName))
                 .addGap(28, 28, 28)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -648,6 +767,8 @@ private void deleteData () {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        getAccessibleContext().setAccessibleName("Rukun Warga 15");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -666,34 +787,6 @@ private void deleteData () {
 
     private void jDateChooser1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser1PropertyChange
         // TODO add your handling code here:
-//        String sql = "INSERT INTO warga(nama,agama,no_hp,jenis_kelamin,tanggal_lahir,rt,alamat,no_ktp) values (?,?,?,?,?,?,?,?)";
-//        try {   
-//            PreparedStatement stat = conn.prepareStatement(sql);
-//            stat.setString(1, tfNama.getText());
-//            stat.setString(2, cbAgama.getItemAt(WIDTH).toString());
-//            stat.setString(3, tfHP.getText());
-//            String jenisKelamin = "";
-//            if (rbtnL.isSelected()) {
-//                jenisKelamin = "L";
-//            }else{
-//                jenisKelamin = "P";
-//            }
-//            stat.setString(4, jenisKelamin);
-//            stat.setString(5, jDateChooser1.getDateFormatString());
-//            stat.setString(6, cbRT.getItemAt(WIDTH).toString());
-//            stat.setString(7, tfaAlamat.getText());
-//            stat.setString(8, tfNik.getText());
-//            int i = stat.executeUpdate();
-//            if (i > 0) {
-//                JOptionPane.showMessageDialog(null, "Berhasil");
-//                dataTable();
-//            }else{
-//                JOptionPane.showMessageDialog(null, "Gagal");
-//            }
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(null, e);
-//            System.out.println(e);
-//            }
     }//GEN-LAST:event_jDateChooser1PropertyChange
 
     private void rbtnLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtnLActionPerformed
@@ -730,56 +823,7 @@ private void deleteData () {
 
     private void tblWargaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblWargaMouseClicked
         // TODO add your handling code here:
-        int row = tblWarga.getSelectedRow();
-        DefaultTableModel model = (DefaultTableModel)tblWarga.getModel();
-        
-        tfNama.setText(model.getValueAt(row, 1).toString());
-        tfHP.setText(model.getValueAt(row, 3).toString());
-        
-        String aGama =model.getValueAt(row, 2).toString();
-            switch (aGama) {
-                case "Item 1" :
-                        cbAgama.setSelectedIndex(0);
-                        break;
-                case "Item 2" :
-                        cbAgama.setSelectedIndex(1);
-                        break;
-                case "Item 3" :
-                        cbAgama.setSelectedIndex(2);
-                        break;
-                case "Item 4" :
-                        cbAgama.setSelectedIndex(3);
-                        break;
-            }
-            String jenKel = model.getValueAt(row, 4).toString();
-            if (jenKel.equals("L")) {
-             rbtnL.setSelected(true);
-        } else {
-            rbtnP.setSelected(true);
-        };
-        try {
-            Date dateKlik = new SimpleDateFormat("yyyy-MM-dd").parse((String)model.getValueAt(row, 5));
-            jDateChooser1.setDate(dateKlik);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "ga bisa masuk tanggal nya"+e);
-        }
-        String rT =model.getValueAt(row, 6).toString();
-            switch (rT) {
-                case "Item 1" :
-                        cbRT.setSelectedIndex(0);
-                        break;
-                case "Item 2" :
-                        cbRT.setSelectedIndex(1);
-                        break;
-                case "Item 3" :
-                        cbRT.setSelectedIndex(2);
-                        break;
-                case "Item 4" :
-                        cbRT.setSelectedIndex(3);
-                        break;
-            }
-        tfaAlamat.setText(model.getValueAt(row, 7).toString());
-        tfNik.setText(model.getValueAt(row, 0).toString());
+        klikMouse();
     }//GEN-LAST:event_tblWargaMouseClicked
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -795,7 +839,12 @@ private void deleteData () {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
+        cetakData();
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void tfTLahirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfTLahirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfTLahirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -814,21 +863,23 @@ private void deleteData () {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DataWarga.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataWargaPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DataWarga.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataWargaPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DataWarga.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataWargaPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DataWarga.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataWargaPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DataWarga().setVisible(true);
+                new DataWargaPage().setVisible(true);
             }
         });
     }
@@ -847,6 +898,7 @@ private void deleteData () {
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -868,6 +920,7 @@ private void deleteData () {
     private javax.swing.JTextField tfHP;
     private javax.swing.JTextField tfNama;
     private javax.swing.JTextField tfNik;
+    private javax.swing.JTextField tfTLahir;
     private javax.swing.JLabel tfUserName;
     private javax.swing.JTextArea tfaAlamat;
     // End of variables declaration//GEN-END:variables

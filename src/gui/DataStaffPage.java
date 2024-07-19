@@ -4,208 +4,271 @@
  * and open the template in the editor.
  */
 package gui;
+
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import database.koneksi;
-import static gui.DataWarga.convertUtilDateToSqlDate;
+import static gui.DataWargaPage.convertUtilDateToSqlDate;
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
  * @author zaeha
  */
+public class DataStaffPage extends javax.swing.JFrame {
 
-public class DataStaff extends javax.swing.JFrame {
     private Connection conn = new koneksi().kon();
-    private DefaultTableModel tabmode; 
-    
+    private DefaultTableModel tabmode;
+
     /**
      * Creates new form DataStaff
      */
-    public DataStaff() {
+    public DataStaffPage() {
         initComponents();
         dataTable();
         letakKursor();
         autoID();
-        
+
     }
-    
-    protected void fieldKosong (){
+
+    protected void fieldKosong() {
         tfIdStaff.setText("");
         tfNama.setText("");
         tfUsername.setText("");
         tfUsername.setText("");
         tfPassword.setText("");
         cbIzin.setSelectedIndex(0);
+        jClok.setSelectedIndex(0);
+        tfPassword2.setText("");
     }
-    
-    protected void letakKursor (){
-    tfNama.requestFocus();
+
+    protected void letakKursor() {
+        tfNama.requestFocus();
     }
-    
+
     protected void autoID() {
         if (tfIdStaff == null) {
             JOptionPane.showMessageDialog(null, "Label AutoId belum diinisialisasi.");
             return;
         }
-        
+
         try {
-        Statement stat = conn.createStatement();
-        String sql = "SELECT id_staff FROM staff ORDER BY id_staff DESC LIMIT 1"; // Mengambil ID terbesar
-        ResultSet res = stat.executeQuery(sql);
+            Statement stat = conn.createStatement();
+            String sql = "SELECT id FROM staff_rw ORDER BY id DESC LIMIT 1"; // Mengambil ID terbesar
+            ResultSet res = stat.executeQuery(sql);
 
-        String newId = "IDS0001"; // Default ID jika tabel kosong
+            String newId = "0001"; // Default ID jika tabel kosong
 
-        if (res.next()) {
-            String id_staff = res.getString("id_staff");
-            int AN = Integer.parseInt(id_staff.substring(3)) + 1;
-            String NOL = "";
+            if (res.next()) {
+                String id_staff = res.getString("id");
+                int idNumber = Integer.parseInt(id_staff) + 1; // Mengambil ID terakhir dan menambahkannya
 
-            if (AN < 10) {
-                NOL = "000";
-            } else if (AN < 100) {
-                NOL = "00";
-            } else if (AN < 1000) {
-                NOL = "0";
+                // Format ID dengan leading zero
+                newId = String.format("%04d", idNumber);
             }
 
-            newId = "IDS" + NOL + AN;
+            tfIdStaff.setText(newId);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Auto Number Gagal: " + e);
+            e.printStackTrace();
         }
-
-        tfIdStaff.setText(newId);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Auto Number Gagal: " +e);
     }
-}
 
-    
-    protected void dataTable (){
-    Object [] Baris = {"ID Staff", "Nama", "Jenkel","Izin", "Username", "Password"};
-    tabmode = new DefaultTableModel(null, Baris);
-    try {
-        String isiTeks = tfCari.getText();
-        String sql = "SELECT * from staff where id_staff like '%"+isiTeks+"%' or nama_staff like '%"+isiTeks+"%' order by id_staff asc";
-        Statement stat = conn.createStatement();
-        ResultSet result = stat.executeQuery(sql);
-        while (result.next()) {
-        tabmode.addRow(new Object[]{
-            result.getString(1),
-            result.getString(2),
-            result.getString(3),
-            result.getString(4),
-            result.getString(5),
-            result.getString(6)
-        });
-        }
-        jTable1.setModel(tabmode);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null,"Data Gagal Diambil"+e);
-        System.out.println(""+e);
-    }
-}
-    
-    private void insertData() {
-    if (tfNama.getText().equals("") || tfIdStaff.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfUsername.getText().equals("") || tfPassword.getText().equals("")) {
-        JOptionPane.showMessageDialog(null, "Harap masukan semua data");
-    } else if (tfUsername.getText().length() < 8 || tfUsername.getText().length() > 16) {
-        JOptionPane.showMessageDialog(null, "Username harus 8 karakter atau kurang dari 16 karakter");
-    } else if (!tfUsername.getText().matches(".*[A-Z].*")) {
-        JOptionPane.showMessageDialog(null, "Username harus mengandung minimal satu huruf besar");
-    } else {
+    protected void dataTable() {
+        Object[] Baris = {"ID Staff", "Nama", "Role", "Gender", "No_HP", "Lokasi Bertugas", "Username", "Password"};
+        tabmode = new DefaultTableModel(null, Baris);
         try {
-            // Check if the username already exists
-            String checkSql = "SELECT COUNT(*) FROM staff WHERE username = ?";
-            PreparedStatement checkStat = conn.prepareStatement(checkSql);
-            checkStat.setString(1, tfUsername.getText());
-            ResultSet rs = checkStat.executeQuery();
-            rs.next();
-            if (rs.getInt(1) > 0) {
-                JOptionPane.showMessageDialog(null, "Username sudah ada, masukkan Username yang berbeda.");
+            String isiTeks = tfCari.getText();
+            String sql = "SELECT * from staff_rw where id like '%" + isiTeks + "%' or nama like '%" + isiTeks + "%' order by id asc";
+            Statement stat = conn.createStatement();
+            ResultSet result = stat.executeQuery(sql);
+            while (result.next()) {
+                tabmode.addRow(new Object[]{
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    result.getString(4),
+                    result.getString(5),
+                    result.getString(6),
+                    result.getString(7),
+                    result.getString(8),});
+            }
+            jTable1.setModel(tabmode);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal Diambil" + e);
+            System.out.println("" + e);
+            e.printStackTrace();
+        }
+    }
+
+    private void insertData() {
+        if (tfNama.getText().equals("") || tfIdStaff.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfUsername.getText().equals("") || tfPassword.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Harap masukan semua data");
+        } else if (tfUsername.getText().length() < 8 || tfUsername.getText().length() > 16) {
+            JOptionPane.showMessageDialog(null, "Username harus 8 karakter atau kurang dari 16 karakter");
+        } else if (!tfUsername.getText().matches(".*[A-Z].*")) {
+            JOptionPane.showMessageDialog(null, "Username harus mengandung minimal satu huruf besar");
+        } else {
+            try {
+                // Check if the username already exists
+                String checkSql = "SELECT COUNT(*) FROM staff_rw WHERE username = ?";
+                PreparedStatement checkStat = conn.prepareStatement(checkSql);
+                checkStat.setString(1, tfUsername.getText());
+                ResultSet rs = checkStat.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    JOptionPane.showMessageDialog(null, "Username sudah ada, masukkan Username yang berbeda.");
+                    return;
+                }
+
+                // If username does not exist, proceed with insertion
+                String sql = "INSERT INTO staff_rw (id, nama, role, jenis_kelamin, no_hp, lokasi, username, password) VALUES (?,?,?,?,?,?,?,?)";
+                PreparedStatement stat = conn.prepareStatement(sql);
+                stat.setString(1, tfIdStaff.getText());
+                stat.setString(2, tfNama.getText());
+                stat.setString(3, cbIzin.getSelectedItem().toString());
+                String jenisKelamin = rbtnL.isSelected() ? "L" : "P";
+                stat.setString(4, jenisKelamin);
+                stat.setString(5, tfPassword2.getText());
+                stat.setString(6, jClok.getSelectedItem().toString());
+                stat.setString(7, tfUsername.getText());
+                stat.setString(8, tfPassword.getText());
+
+                int i = stat.executeUpdate();
+                if (i > 0) {
+                    JOptionPane.showMessageDialog(null, "Berhasil");
+                    dataTable();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Gagal");
+                }
+                fieldKosong();
+                autoID();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!");
+                e.printStackTrace();
+                System.out.println(e);
+            }
+        }
+    }
+
+    private void deleteData() {
+        int option = JOptionPane.showConfirmDialog(null, "Yakin ?", "Hapus '" + tfNama.getText() + "' ", JOptionPane.YES_NO_OPTION);
+        if (option == 0) {
+            String sql = "DELETE FROM staff_rw where id = '" + tfIdStaff.getText() + "' ";
+            try {
+                PreparedStatement stat = conn.prepareStatement(sql);
+                stat.executeUpdate();
+                fieldKosong();
+                letakKursor();
+                JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus!");
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+            dataTable();
+            autoID();
+        }
+    }
+
+    private void updateData() {
+        if (tfNama.getText().equals("") || tfIdStaff.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfUsername.getText().equals("") || tfPassword.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Harap masukan semua data");
+        } else if (tfUsername.getText().length() < 8 || tfUsername.getText().length() > 16) {
+            JOptionPane.showMessageDialog(null, "Username harus 8 karakter atau kurang dari 16 karakter");
+        } else if (!tfUsername.getText().matches(".*[A-Z].*")) {
+            JOptionPane.showMessageDialog(null, "Username harus mengandung minimal satu huruf besar");
+        } else {
+            String sql = "UPDATE staff_rw SET nama = ?, jenis_kelamin = ?, izin = ?, username = ?, password = ? WHERE id = ?";
+            try {
+                PreparedStatement stat = conn.prepareStatement(sql);
+                stat.setString(1, tfNama.getText());
+                String jenisKelamin = rbtnL.isSelected() ? "L" : "P";
+                stat.setString(2, jenisKelamin);
+                stat.setString(3, cbIzin.getSelectedItem().toString());
+                stat.setString(4, tfUsername.getText());
+                stat.setString(5, tfPassword.getText());
+                stat.setString(6, tfIdStaff.getText());
+
+                int i = stat.executeUpdate();
+                if (i > 0) {
+                    JOptionPane.showMessageDialog(null, "Data Berhasil Diubah!");
+                    dataTable();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Gagal mengubah data");
+                }
+                fieldKosong();
+                letakKursor();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Data Gagal Diubah!");
+                System.out.println(e);
+            }
+        }
+    }
+
+    void cetakData() {
+        String reportSrcFile = "src/laporan/dataStaff.jrxml"; // Path ke file jrxml Anda
+        String userHome = System.getProperty("user.home"); // Mendapatkan direktori home pengguna
+        String reportDestDir = userHome + "\\Downloads\\";  // Directory untuk output file PDF
+        String baseFileName = "LaporanTugasStaffRW15";
+        String fileExtension = ".pdf";
+
+        // Mengambil nilai dari tfNik
+        String nik = tfIdStaff.getText();
+        if (nik == null || nik.trim().isEmpty()) {
+            nik = null; // Atur parameter menjadi null jika kosong
+        }
+
+        try {
+            Connection conn = koneksi.kon();
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportSrcFile);
+
+            // Membuat parameter map
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("p1", nik);  // Mengatur parameter "p1"
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);
+
+            // Cek apakah laporan memiliki halaman
+            if (jasperPrint.getPages().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Tidak ada data untuk ditampilkan.");
                 return;
             }
 
-            // If username does not exist, proceed with insertion
-            String sql = "INSERT INTO staff(id_staff, nama_staff, jenis_kelamin, izin, username, password) VALUES (?,?,?,?,?,?)";
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, tfIdStaff.getText());
-            stat.setString(2, tfNama.getText());
-            String jenisKelamin = rbtnL.isSelected() ? "L" : "P";
-            stat.setString(3, jenisKelamin);
-            stat.setString(4, cbIzin.getSelectedItem().toString());
-            stat.setString(5, tfUsername.getText());
-            stat.setString(6, tfPassword.getText());
+            JasperViewer.viewReport(jasperPrint, false);
 
-            int i = stat.executeUpdate();
-            if (i > 0) {
-                JOptionPane.showMessageDialog(null, "Berhasil");
-                dataTable();
-            } else {
-                JOptionPane.showMessageDialog(null, "Gagal");
-            }
-            fieldKosong();
-            autoID();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!");
-            System.out.println(e);
+            // Generate the destination file path
+            String reportDestFile = generateUniqueFileName(reportDestDir, baseFileName, fileExtension);
+            JasperExportManager.exportReportToPdfFile(jasperPrint, reportDestFile);
+
+            JOptionPane.showMessageDialog(null, "Laporan berhasil dibuat di: " + reportDestFile);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Gagal membuat laporan: " + e.getMessage());
         }
     }
-}
-    
-    private void deleteData () {
-    int option = JOptionPane.showConfirmDialog(null, "Yakin ?", "Hapus '"+tfNama.getText()+"' ", JOptionPane.YES_NO_OPTION);
-    if (option == 0) {
-        String sql = "DELETE FROM staff where id_staff = '"+tfIdStaff.getText()+"' ";
-        try {
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.executeUpdate();
-            fieldKosong();
-            letakKursor();
-            JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus!");
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
+
+    private String generateUniqueFileName(String dir, String baseName, String extension) {
+        File file = new File(dir + baseName + extension);
+        int count = 1;
+        while (file.exists()) {
+            file = new File(dir + baseName + "(" + count + ")" + extension);
+            count++;
         }
-        dataTable();
-        autoID();
+        return file.getAbsolutePath();
     }
-}
-
-    private void updateData() {
-    if (tfNama.getText().equals("") || tfIdStaff.getText().equals("") || (!rbtnL.isSelected() && !rbtnP.isSelected()) || tfUsername.getText().equals("") || tfPassword.getText().equals("")) {
-        JOptionPane.showMessageDialog(null, "Harap masukan semua data");
-    } else if (tfUsername.getText().length() < 8 || tfUsername.getText().length() > 16) {
-        JOptionPane.showMessageDialog(null, "Username harus 8 karakter atau kurang dari 16 karakter");
-    } else if (!tfUsername.getText().matches(".*[A-Z].*")) {
-        JOptionPane.showMessageDialog(null, "Username harus mengandung minimal satu huruf besar");
-    } else {
-        String sql = "UPDATE staff SET nama_staff = ?, jenis_kelamin = ?, izin = ?, username = ?, password = ? WHERE id_staff = ?";
-        try {
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, tfNama.getText());
-            String jenisKelamin = rbtnL.isSelected() ? "L" : "P";
-            stat.setString(2, jenisKelamin);
-            stat.setString(3, cbIzin.getSelectedItem().toString());
-            stat.setString(4, tfUsername.getText());
-            stat.setString(5, tfPassword.getText());
-            stat.setString(6, tfIdStaff.getText());
-
-            int i = stat.executeUpdate();
-            if (i > 0) {
-                JOptionPane.showMessageDialog(null, "Data Berhasil Diubah!");
-                dataTable();
-            } else {
-                JOptionPane.showMessageDialog(null, "Gagal mengubah data");
-            }
-            fieldKosong();
-            letakKursor();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Data Gagal Diubah!");
-            System.out.println(e);
-        }
-    }
-}
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -234,6 +297,10 @@ public class DataStaff extends javax.swing.JFrame {
         rbtnL = new javax.swing.JRadioButton();
         rbtnP = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
+        tfLok = new javax.swing.JLabel();
+        tfHp = new javax.swing.JLabel();
+        tfPassword2 = new javax.swing.JTextField();
+        jClok = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         tblStaff = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -247,10 +314,9 @@ public class DataStaff extends javax.swing.JFrame {
         btnCetak = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(1200, 475));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Halaman Data Staff");
         setMinimumSize(new java.awt.Dimension(1200, 400));
-        setPreferredSize(new java.awt.Dimension(1000, 550));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setMaximumSize(new java.awt.Dimension(2000, 2000));
@@ -269,7 +335,7 @@ public class DataStaff extends javax.swing.JFrame {
         jLabel3.setText("Nama Staff");
 
         jLabel4.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
-        jLabel4.setText("Izin");
+        jLabel4.setText("Role");
 
         jLabel5.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         jLabel5.setText("JenKel");
@@ -313,6 +379,28 @@ public class DataStaff extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         jButton1.setText("GetID");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        tfLok.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+        tfLok.setText("Lokasi RT");
+
+        tfHp.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+        tfHp.setText("No HP");
+
+        tfPassword2.setBackground(new java.awt.Color(204, 231, 231));
+        tfPassword2.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+        tfPassword2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfPassword2ActionPerformed(evt);
+            }
+        });
+
+        jClok.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+        jClok.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7" }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -321,24 +409,11 @@ public class DataStaff extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel4))
                 .addGap(21, 21, 21)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(rbtnL)
-                                .addGap(18, 18, 18)
-                                .addComponent(rbtnP))
-                            .addComponent(cbIzin, 0, 224, Short.MAX_VALUE)
-                            .addComponent(tfUsername)
-                            .addComponent(tfPassword))
-                        .addContainerGap(30, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(tfNama, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -346,7 +421,34 @@ public class DataStaff extends javax.swing.JFrame {
                                 .addComponent(tfIdStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(cbIzin, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tfHp)
+                    .addComponent(tfLok)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(rbtnL)
+                                .addGap(18, 18, 18)
+                                .addComponent(rbtnP))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(tfPassword, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(tfUsername)
+                                    .addComponent(tfPassword2)
+                                    .addComponent(jClok, 0, 224, Short.MAX_VALUE))))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -356,7 +458,7 @@ public class DataStaff extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(tfIdStaff, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addGap(13, 13, 13)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(tfNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -371,13 +473,21 @@ public class DataStaff extends javax.swing.JFrame {
                     .addComponent(rbtnP))
                 .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfHp))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfLok)
+                    .addComponent(jClok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(tfUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -446,7 +556,7 @@ public class DataStaff extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 326, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                                 .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -570,7 +680,7 @@ public class DataStaff extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(68, 68, 68)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
+                        .addGap(46, 46, 46)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -585,25 +695,23 @@ public class DataStaff extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(93, 93, 93)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(1485, Short.MAX_VALUE))
+                .addContainerGap(85, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1191, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -626,6 +734,7 @@ public class DataStaff extends javax.swing.JFrame {
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         // TODO add your handling code here:
+        cetakData();
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -651,23 +760,64 @@ public class DataStaff extends javax.swing.JFrame {
         // TODO add your handling code here:
         int row = jTable1.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    
+
         tfIdStaff.setText(model.getValueAt(row, 0).toString());
         tfNama.setText(model.getValueAt(row, 1).toString());
+        String role = tabmode.getValueAt(row, 2).toString();
+        switch (role) {
+            case "Staff":
+                cbIzin.setSelectedIndex(0);
+                break;
+            case "Ketua":
+                cbIzin.setSelectedIndex(1);
+                break;
 
-        String jenKel = model.getValueAt(row, 2).toString();
+        }
+
+        String jenKel = model.getValueAt(row, 3).toString();
         if (jenKel.equals("L")) {
             rbtnL.setSelected(true);
         } else {
             rbtnP.setSelected(true);
         }
 
-        String izin = model.getValueAt(row, 3).toString();
-        cbIzin.setSelectedItem(izin);
-
-        tfUsername.setText(model.getValueAt(row, 4).toString());
-        tfPassword.setText(model.getValueAt(row, 5).toString());
+        tfPassword2.setText(model.getValueAt(row, 4).toString());
+        String lokasi = tabmode.getValueAt(row, 5).toString();
+        switch (lokasi) {
+            case "1":
+                jClok.setSelectedIndex(0);
+                break;
+            case "2":
+                jClok.setSelectedIndex(1);
+                break;
+            case "3":
+                jClok.setSelectedIndex(2);
+                break;
+            case "4":
+                jClok.setSelectedIndex(3);
+                break;
+            case "5":
+                jClok.setSelectedIndex(3);
+                break;
+            case "6":
+                jClok.setSelectedIndex(3);
+                break;
+            case "7":
+                jClok.setSelectedIndex(3);
+                break;
+        }
+        tfUsername.setText(model.getValueAt(row, 6).toString());
+        tfPassword.setText(model.getValueAt(row, 7).toString());
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        autoID();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tfPassword2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPassword2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfPassword2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -686,20 +836,21 @@ public class DataStaff extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DataStaff.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataStaffPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DataStaff.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataStaffPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DataStaff.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataStaffPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DataStaff.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataStaffPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DataStaff().setVisible(true);
+                new DataStaffPage().setVisible(true);
             }
         });
     }
@@ -715,6 +866,7 @@ public class DataStaff extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cbIzin;
     private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<String> jClok;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -731,9 +883,12 @@ public class DataStaff extends javax.swing.JFrame {
     private javax.swing.JRadioButton rbtnP;
     private javax.swing.JScrollPane tblStaff;
     private javax.swing.JTextField tfCari;
+    private javax.swing.JLabel tfHp;
     private javax.swing.JTextField tfIdStaff;
+    private javax.swing.JLabel tfLok;
     private javax.swing.JTextField tfNama;
     private javax.swing.JTextField tfPassword;
+    private javax.swing.JTextField tfPassword2;
     private javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 }

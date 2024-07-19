@@ -14,7 +14,7 @@ import javax.swing.*;
  *
  * @author zaeha
  */
-public class login extends javax.swing.JFrame {
+public class LoginPage extends javax.swing.JFrame {
 
     /**
      * Creates new form login
@@ -22,12 +22,35 @@ public class login extends javax.swing.JFrame {
     Connection conn;
     LoginData Id = new LoginData();
     
-    public login() {
+    public LoginPage() {
         initComponents();
         setLocationRelativeTo(this);
         conn = koneksi.kon();
         Id = new LoginData();
 
+    }
+    
+    private void loginMasuk(){
+        String username = tfusername.getText();
+        String password = tfPassword.getText();
+        try{
+            Statement stat = conn.createStatement( );
+            String sql        = "Select * FROM staff_rw where username ='"+username+"' and password ='"+password+"'";
+            ResultSet rs   = stat.executeQuery(sql);
+
+            if(rs.next ()){
+                Id.setId_login(rs.getString("id"));
+                Id.setNama_login(rs.getString("nama"));
+                Id.setIzin_login(rs.getString("role"));
+                JOptionPane.showMessageDialog(null, "Login Berhasil");
+                this.dispose();
+                new DashboardPage().setVisible(true);
+            }else{
+                JOptionPane.showMessageDialog(null, "Username atau Password salah, silahkan coba lagi");
+            }
+        }catch(SQLException err){
+            JOptionPane.showMessageDialog(null, err.getMessage() );
+        }
     }
 
     /**
@@ -76,6 +99,19 @@ public class login extends javax.swing.JFrame {
 
         tfPassword.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         tfPassword.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Password", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
+        tfPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfPasswordActionPerformed(evt);
+            }
+        });
+        tfPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tfPasswordKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tfPasswordKeyReleased(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(255, 102, 102));
         jButton2.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
@@ -150,32 +186,26 @@ public class login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String username = tfusername.getText();
-        String password = tfPassword.getText();
-        try{
-            Statement stat = conn.createStatement( );
-            String sql        = "Select * FROM staff where username ='"+username+"' and password ='"+password+"'";
-            ResultSet rs   = stat.executeQuery(sql);
-
-            if(rs.next ()){
-                Id.setId_login(rs.getString("id_staff"));
-                Id.setNama_login(rs.getString("nama_staff"));
-                Id.setIzin_login(rs.getString("izin"));
-                JOptionPane.showMessageDialog(null, "Login Berhasil");
-                this.dispose();
-                new dashboard().setVisible(true);
-            }else{
-                JOptionPane.showMessageDialog(null, "Username atau Password salah, silahkan coba lagi");
-            }
-        }catch(SQLException err){
-            JOptionPane.showMessageDialog(null, err.getMessage() );
-        }
+        loginMasuk();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void tfPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfPasswordKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfPasswordKeyPressed
+
+    private void tfPasswordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfPasswordKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfPasswordKeyReleased
+
+    private void tfPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPasswordActionPerformed
+        // TODO add your handling code here:
+        loginMasuk();
+    }//GEN-LAST:event_tfPasswordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -194,20 +224,21 @@ public class login extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new login().setVisible(true);
+                new LoginPage().setVisible(true);
             }
         });
     }
