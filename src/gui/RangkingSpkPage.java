@@ -6,11 +6,15 @@
 package gui;
 
 import database.koneksi;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -18,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import popUp.popUpAlternatif;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 import popUp.popUpPenilaian;
 
 /**
@@ -36,9 +41,6 @@ public class RangkingSpkPage extends javax.swing.JFrame {
     private String[] namaPublik;
     private String[] noKtpPublik;
 
-    /**
-     * Creates new form RangkingSpk
-     */
     public RangkingSpkPage() {
         initComponents();
         dataTable();
@@ -332,7 +334,8 @@ public class RangkingSpkPage extends javax.swing.JFrame {
 
         // Setelah loop selesai, masukkan nilai ke dalam nilaiVPublik
         nilaiVPublik = v.clone();
-        Arrays.sort(nilaiVPublik);
+
+//        Arrays.sort(nilaiVPublik);
         printArray(nilaiVPublik);
 
         return v;
@@ -351,95 +354,85 @@ public class RangkingSpkPage extends javax.swing.JFrame {
         System.out.println("Solusi Terbaik adalah Alternatif " + (idxSolusiTerbaik + 1) + " dengan Nilai Preferensi " + df.format(maxV));
     }
 
-   protected void penilaianSPK() {
-    try {
-        // Mengambil bobot kriteria dan jenis kriteria dari database
-        List<Double> bobotList = new ArrayList<>();
-        List<String> jenisKriteriaList = new ArrayList<>();
-        fetchCriteriaWeights(bobotList, jenisKriteriaList);
+    private void penilaianSPK() {
+        try {
+            List<Double> bobotList = new ArrayList<>();
+            List<String> jenisKriteriaList = new ArrayList<>();
+            fetchCriteriaWeights(bobotList, jenisKriteriaList);
 
-        int rowCountSPK = tblSPK.getRowCount();
-        int columnCountSPK = tblSPK.getColumnCount(); // Jumlah kolom sebelum penambahan kolom "nilai V" dan "rangking"
+            int rowCountSPK = tblSPK.getRowCount();
+            int columnCountSPK = tblSPK.getColumnCount();
 
-        double[] normalizedWeights = calculateNormalizedWeights(bobotList);
+            if (rowCountSPK == 0 || columnCountSPK == 0) {
+                JOptionPane.showMessageDialog(null, "Data pada tabel SPK tidak valid.");
+                return;
+            }
 
-        int[][] nilaiC = new int[rowCountSPK][columnCountSPK];
-        double[] sumC = new double[columnCountSPK];
-        for (int i = 0; i < rowCountSPK; i++) {
-            for (int j = 0; j < columnCountSPK; j++) {
-                try {
-                    nilaiC[i][j] = Integer.parseInt(tblSPK.getValueAt(i, j).toString());
-                    sumC[j] += Math.pow(nilaiC[i][j], 2);
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(null, "Format angka tidak valid pada baris " + (i + 1) + ", kolom " + (j + 1) + ": " + e.getMessage());
-                    return;
+            double[] normalizedWeights = calculateNormalizedWeights(bobotList);
+
+            int[][] nilaiC = new int[rowCountSPK][columnCountSPK];
+            double[] sumC = new double[columnCountSPK];
+            for (int i = 0; i < rowCountSPK; i++) {
+                for (int j = 0; j < columnCountSPK; j++) {
+                    try {
+                        nilaiC[i][j] = Integer.parseInt(tblSPK.getValueAt(i, j).toString());
+                        sumC[j] += Math.pow(nilaiC[i][j], 2);
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(null, "Format angka tidak valid pada baris " + (i + 1) + ", kolom " + (j + 1) + ": " + e.getMessage());
+                        return;
+                    }
                 }
             }
+
+            double[] pembagiC = new double[columnCountSPK];
+            for (int j = 0; j < columnCountSPK; j++) {
+                pembagiC[j] = Math.sqrt(sumC[j]);
+            }
+
+            double[][] normalized = calculateNormalizedValues(rowCountSPK, columnCountSPK, nilaiC, pembagiC);
+            double[][] weightedNormalized = calculateWeightedNormalizedMatrix(rowCountSPK, columnCountSPK, normalized, normalizedWeights);
+
+            double[] aPlus = new double[columnCountSPK];
+            double[] aMinus = new double[columnCountSPK];
+            calculateIdealSolutions(rowCountSPK, columnCountSPK, weightedNormalized, aPlus, aMinus, jenisKriteriaList);
+
+            double[] dPlus = calculateDistances(rowCountSPK, columnCountSPK, weightedNormalized, aPlus, jenisKriteriaList, true);
+            double[] dMinus = calculateDistances(rowCountSPK, columnCountSPK, weightedNormalized, aMinus, jenisKriteriaList, false);
+
+            double[] preferenceValues = calculatePreferenceValues(rowCountSPK, dPlus, dMinus);
+
+            double[] tempPreferenceValues = preferenceValues.clone();
+            Arrays.sort(tempPreferenceValues);
+
+            int altRowCount = tblAlt.getRowCount();
+            noKtpPublik = new String[altRowCount];
+            namaPublik = new String[altRowCount];
+
+            for (int i = 0; i < altRowCount; i++) {
+                Object nama = tblAlt.getValueAt(i, 1);
+                namaPublik[i] = nama.toString();
+                Object id = tblAlt.getValueAt(i, 0);
+                noKtpPublik[i] = id.toString();
+            }
+
+//        int[] rankings = new int[rowCountSPK];
+//        for (int i = 0; i < rowCountSPK; i++) {
+//            int rank = Arrays.binarySearch(tempPreferenceValues, preferenceValues[i]);
+//            rankings[i] = rowCountSPK - rank;
+//        }
+            JOptionPane.showMessageDialog(null, "Berhasil");
+            autoID();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Format angka tidak valid: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        double[] pembagiC = new double[columnCountSPK];
-        for (int j = 0; j < columnCountSPK; j++) {
-            pembagiC[j] = Math.sqrt(sumC[j]);
-        }
-
-        // Menghitung nilai normalisasi
-        double[][] normalized = calculateNormalizedValues(rowCountSPK, columnCountSPK, nilaiC, pembagiC);
-        double[][] weightedNormalized = calculateWeightedNormalizedMatrix(rowCountSPK, columnCountSPK, normalized, normalizedWeights);
-
-        double[] aPlus = new double[columnCountSPK];
-        double[] aMinus = new double[columnCountSPK];
-        calculateIdealSolutions(rowCountSPK, columnCountSPK, weightedNormalized, aPlus, aMinus, jenisKriteriaList);
-
-        double[] dPlus = calculateDistances(rowCountSPK, columnCountSPK, weightedNormalized, aPlus, jenisKriteriaList, true);
-        double[] dMinus = calculateDistances(rowCountSPK, columnCountSPK, weightedNormalized, aMinus, jenisKriteriaList, false);
-
-        double[] preferenceValues = calculatePreferenceValues(rowCountSPK, dPlus, dMinus);
-
-        // Mengisi nilai "nilai V" dan "rangking" pada tabel tblSPK
-        double[] tempPreferenceValues = preferenceValues.clone();
-        Arrays.sort(tempPreferenceValues);
-
-        int altRowCount = tblAlt.getRowCount();
-
-        // Inisialisasi array untuk menyimpan data alternatif (ID, Nama Karyawan, Tanggal)
-        noKtpPublik = new String[altRowCount];
-        namaPublik = new String[altRowCount];
-
-        for (int i = 0; i < altRowCount; i++) {
-            Object nama = tblAlt.getValueAt(i, 1);
-            namaPublik[i] = nama.toString();
-            System.out.printf("Nama [%d] = %s%n", i, namaPublik[i]);
-        }
-
-        for (int i = 0; i < altRowCount; i++) {
-            Object id = tblAlt.getValueAt(i, 0);
-            noKtpPublik[i] = id.toString(); // Ambil ID alternatif
-            System.out.printf("No KTP [%d] = %s%n", i, noKtpPublik[i]);
-        }
-        System.out.println("Data dari tblAlt berhasil dimuat.");
-
-        int[] rankings = new int[rowCountSPK];
-        for (int i = 0; i < rowCountSPK; i++) {
-            int rank = Arrays.binarySearch(tempPreferenceValues, preferenceValues[i]);
-            rankings[i] = rowCountSPK - rank;
-        }
-
-        // Simpan hasil ke database (opsional, tergantung kebutuhan)
-        // simpanKeDatabase();
-
-        JOptionPane.showMessageDialog(null, "Berhasil");
-        autoID();
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
-        e.printStackTrace();
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(null, "Format angka tidak valid: " + e.getMessage());
-        e.printStackTrace();
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
-        e.printStackTrace();
     }
-}
 
     private static void printArray(double[] array) {
         System.out.println("Array Preferensi:");
@@ -448,67 +441,7 @@ public class RangkingSpkPage extends javax.swing.JFrame {
         }
         System.out.println();
     }
-
-    protected void simpanKeDatabase() {
-        String sqlHasil = "INSERT INTO hasil (tanggal) VALUES (?)";
-        String sqlRangking = "INSERT INTO hasil_rangking (id_hasil, no_ktp, nama, nilaiV, rangking) VALUES (?, ?, ?, ?, ?)";
-
-        try {
-            // Ambil tanggal dari komponen UI Anda, misalnya jSpinner1
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String tanggalFormatted = sdf.format(jSpinner1.getValue());
-
-            // Simpan ke tabel hasil
-            PreparedStatement psHasil = conn.prepareStatement(sqlHasil, Statement.RETURN_GENERATED_KEYS);
-            psHasil.setString(1, tanggalFormatted);
-            psHasil.executeUpdate();
-
-            ResultSet rs = psHasil.getGeneratedKeys();
-            int idHasil = 0;
-            if (rs.next()) {
-                idHasil = rs.getInt(1);
-            }
-
-            // Simpan ke tabel hasil_rangking
-            DefaultTableModel modelSPK = (DefaultTableModel) tblSPK.getModel();
-            DefaultTableModel modelAlt = (DefaultTableModel) tblAlt.getModel();
-            PreparedStatement psRangking = conn.prepareStatement(sqlRangking);
-            for (int i = 0; i < modelSPK.getRowCount(); i++) {
-                String noKtp = modelAlt.getValueAt(i, 0).toString();
-                String nama = modelAlt.getValueAt(i, 1).toString();
-                double nilaiV = Double.parseDouble(modelSPK.getValueAt(i, modelSPK.getColumnCount() - 2).toString().replace(",", ".")); // Ambil nilai V dari kolom yang benar
-                int rangking = Integer.parseInt(modelSPK.getValueAt(i, modelSPK.getColumnCount() - 1).toString()); // Ambil rangking dari kolom yang benar
-                psRangking.setInt(1, idHasil);
-                psRangking.setString(2, noKtp);
-                psRangking.setString(3, nama);
-                psRangking.setDouble(4, nilaiV);
-                psRangking.setInt(5, rangking);
-                psRangking.addBatch();
-            }
-            psRangking.executeBatch();
-
-            JOptionPane.showMessageDialog(null, "Data berhasil disimpan ke database");
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Gagal: " + e.getMessage());
-            e.printStackTrace();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Format angka tidak valid: " + e.getMessage());
-        }
-    }
-
-// Tambahkan metode ini untuk mendapatkan peringkat berdasarkan nilai preferensi
-    private int getRanking(int index, double[] preferenceValues) {
-        double[] sortedValues = preferenceValues.clone();
-        Arrays.sort(sortedValues);
-        int rank = 1;
-        for (int i = sortedValues.length - 1; i >= 0; i--) {
-            if (preferenceValues[index] == sortedValues[i]) {
-                return rank;
-            }
-            rank++;
-        }
-        return rank;
-    }
+ 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -523,7 +456,6 @@ public class RangkingSpkPage extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         lblAutoId = new javax.swing.JLabel();
         btnGetID = new javax.swing.JButton();
-        jSpinner1 = new javax.swing.JSpinner();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -533,21 +465,23 @@ public class RangkingSpkPage extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblAlt = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Halaman Penilaian");
-        setMinimumSize(new java.awt.Dimension(1300, 850));
-        setPreferredSize(new java.awt.Dimension(1221, 800));
+        setMinimumSize(new java.awt.Dimension(950, 800));
+        setUndecorated(true);
+        setResizable(false);
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setMaximumSize(new java.awt.Dimension(2000, 2000));
-        jPanel3.setPreferredSize(new java.awt.Dimension(1500, 2000));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
+        jPanel3.setMaximumSize(new java.awt.Dimension(950, 800));
+        jPanel3.setPreferredSize(new java.awt.Dimension(1000, 800));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "ID Saat Ini", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
         lblAutoId.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
@@ -561,34 +495,24 @@ public class RangkingSpkPage extends javax.swing.JFrame {
             }
         });
 
-        jSpinner1.setModel(new javax.swing.SpinnerDateModel());
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(lblAutoId, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                        .addComponent(btnGetID)))
+                .addComponent(lblAutoId, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addComponent(btnGetID)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAutoId)
                     .addComponent(btnGetID))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 17, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -658,15 +582,6 @@ public class RangkingSpkPage extends javax.swing.JFrame {
             }
         });
 
-        jButton6.setBackground(new java.awt.Color(204, 204, 204));
-        jButton6.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
-        jButton6.setText("Simpan");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -675,22 +590,21 @@ public class RangkingSpkPage extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -699,76 +613,84 @@ public class RangkingSpkPage extends javax.swing.JFrame {
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Tw Cen MT", 1, 48)); // NOI18N
-        jLabel1.setText("PENILAIAN BANTUAN SOSIAL RW 15");
+        jLabel1.setText("SOSIAL RW 15");
 
         jButton2.setBackground(new java.awt.Color(255, 153, 153));
         jButton2.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
-        jButton2.setText("Exit");
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/icons8-close-32.png"))); // NOI18N
+        jButton2.setMaximumSize(new java.awt.Dimension(30, 30));
+        jButton2.setMinimumSize(new java.awt.Dimension(30, 30));
+        jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Tw Cen MT", 1, 48)); // NOI18N
+        jLabel2.setText("PENILAIAN BANTUAN");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel1))
-                .addGap(750, 750, 750))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(481, 481, 481)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(53, 53, 53)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1271, 1271, 1271))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addGap(22, 22, 22))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1310, 1310, 1310))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 2024, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel3, 2002, 2002, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -789,12 +711,39 @@ public class RangkingSpkPage extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        this.dispose();
+        Timer timer = new Timer(50, null);
+        timer.addActionListener(new ActionListener() {
+            private float opacity = 1.0f;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                opacity -= 0.1f;
+                if (opacity <= 0) {
+                    timer.stop();
+                    dispose();
+                } else {
+                    setOpacity(Math.max(opacity, 0));
+                }
+            }
+        });
+        timer.start();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         penilaianSPK();
+        System.out.println(Arrays.toString(namaPublik));
+        System.out.println(Arrays.toString(noKtpPublik));
+        popUpPenilaian popUp = new popUpPenilaian();
+
+        popUp.setNilai(nilaiVPublik, namaPublik, noKtpPublik);
+        if (nilaiVPublik != null) {
+            popUp.penilaianPublik = this;
+            popUp.setVisible(true);
+            popUp.setResizable(false);
+        } else {
+            System.out.println("nilai V Masih Kosong " + nilaiVPublik);
+        }
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -808,23 +757,6 @@ public class RangkingSpkPage extends javax.swing.JFrame {
         dataTable();
         autoID();
     }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-        System.out.println(Arrays.toString(namaPublik));
-//        System.out.println(Arrays.deepToString(nilaiVPublik));
-        System.out.println(Arrays.toString(noKtpPublik));
-        popUpPenilaian popUp = new popUpPenilaian();
-
-        popUp.setNilai(nilaiVPublik, namaPublik, noKtpPublik);
-        if (nilaiVPublik != null) {
-            popUp.penilaianPublik = this;
-            popUp.setVisible(true);
-            popUp.setResizable(false);
-        } else {
-            System.out.println("nilai V Masih Kosong " + nilaiVPublik);
-        }
-    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -869,14 +801,13 @@ public class RangkingSpkPage extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JLabel lblAutoId;
     private javax.swing.JTable tblAlt;
     private javax.swing.JTable tblSPK;
