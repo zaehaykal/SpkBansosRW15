@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7b3bf4d9-ec3a-455f-a1fa-485f32af6fae">
-	<property name="ireport.zoom" value="2.143588810000022"/>
+	<property name="ireport.zoom" value="1.2100000000000124"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString>
 		<![CDATA[SELECT
      *
 FROM
-     kriteria
-]]>
+     kriteria]]>
 	</queryString>
 	<field name="id_kriteria" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -33,61 +32,54 @@ FROM
 	</title>
 	<pageHeader>
 		<band height="159" splitType="Stretch">
-			<staticText>
-				<reportElement x="104" y="36" width="346" height="23" uuid="ac7a3282-9f82-462c-855b-cb661b3ffe77"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[KELURAHAN PANCORAN MAS]]></text>
-			</staticText>
 			<image>
-				<reportElement x="23" y="19" width="45" height="60" uuid="1d42a918-0820-47c1-817d-b4be541193d7"/>
+				<reportElement x="12" y="9" width="77" height="94" uuid="1d42a918-0820-47c1-817d-b4be541193d7"/>
 				<imageExpression><![CDATA["C:\\Users\\zaeha\\Downloads\\toppng.com-logo-depok-336x397 (1).jpg"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="13" y="114" width="174" height="14" uuid="ab1ba433-62bf-459e-9bce-2853c0aa8d00"/>
+				<reportElement x="1" y="114" width="174" height="14" uuid="ab1ba433-62bf-459e-9bce-2853c0aa8d00"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="10"/>
+					<font fontName="DejaVu Serif" size="10"/>
 				</textElement>
 				<text><![CDATA[Sekretariat RW 15]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="131" y="4" width="292" height="35" uuid="2baeef67-21de-47ee-8719-9798233badd8"/>
+				<reportElement x="131" y="10" width="292" height="35" uuid="2baeef67-21de-47ee-8719-9798233badd8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Black" size="20"/>
+					<font fontName="DejaVu Sans" size="24" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RUKUN WARGA 15]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="104" y="59" width="346" height="20" uuid="24aa7ccf-26a6-45c6-a994-614f6586e4bd"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="14"/>
-				</textElement>
-				<text><![CDATA[KECAMATAN PANCORAN MAS]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="128" width="555" height="1" uuid="9db924f2-d381-4b0d-ac35-50a3e6e8968b"/>
 			</line>
 			<staticText>
-				<reportElement x="104" y="79" width="346" height="20" uuid="16f00146-16e2-4d21-b6f3-5a9050065134"/>
+				<reportElement x="105" y="45" width="345" height="24" uuid="2aaa4d37-bad3-46a4-b461-7eb69cd0b3ee"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="14"/>
+					<font fontName="DejaVu Sans" size="20" isBold="true"/>
 				</textElement>
-				<text><![CDATA[KOTA DEPOK]]></text>
+				<text><![CDATA[KRITERIA PENERIMA BANTUAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="379" y="113" width="176" height="14" uuid="5a289569-b5d2-4ad1-b104-a792128ea370"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial Black" size="9"/>
+				<reportElement x="105" y="82" width="345" height="13" uuid="99fa05de-219e-4004-93cd-74629804edcb"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<text><![CDATA[Kriteria Penerima Bantuan Sosial]]></text>
+				<text><![CDATA[Kecamatan Pancoran Mas, Kota Depok,  Provinsi Jawa Barat, Kode Pos 16436]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="99" width="100" height="16" uuid="5ffc2d32-ea0d-48dc-9e5b-4e39e04c0c3a"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+				<reportElement x="105" y="69" width="345" height="13" uuid="8fe7c8d0-0236-44eb-989c-7f440b10e653"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<text><![CDATA[Kode Pos 16436]]></text>
+				<text><![CDATA[Jl. Pitara Raya, Gg. Rukun 2 RT002/RW015, Kelurahan Pancoran Mas, ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="95" width="345" height="13" uuid="e6cdfe58-1941-4af6-88a4-d74d32cb5417"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Pos 16436]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -150,7 +142,7 @@ FROM
 			<textField>
 				<reportElement x="188" y="1" width="367" height="53" uuid="d8105c82-d219-41a4-97dc-e6e995f29e6b"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{detail}]]></textFieldExpression>
@@ -182,17 +174,19 @@ FROM
 			<staticText>
 				<reportElement x="409" y="20" width="147" height="20" uuid="4d52f5bd-eea3-46be-9099-4f653dbe589e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Mengetahui,]]></text>
+				<text><![CDATA[Mengetahui Ketua RW,]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="409" y="0" width="147" height="20" uuid="25a4cf64-77aa-412b-b412-0a7e130cd208"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Depok, "+new SimpleDateFormat("dd MMMM yyyy", new java.util.Locale("id")).format(new Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Depok, "+new SimpleDateFormat("EEEE dd MMMM yyyy", new java.util.Locale("id")).format(new Date())]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="409" y="103" width="147" height="20" uuid="9052e839-ab20-4c24-8b55-664a2c51cc82"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Ucam Samsudin]]></text>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Samsudin]]></text>
 			</staticText>
 		</band>
 	</pageFooter>

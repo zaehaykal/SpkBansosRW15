@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0646bd4a-7bc9-46fc-a0b1-09d9031c6db5">
+	<property name="ireport.zoom" value="2.1435888100000016"/>
+	<property name="ireport.x" value="107"/>
+	<property name="ireport.y" value="288"/>
+	<queryString>
+		<![CDATA[SELECT
+     alternatif.`id` AS alternatif_id,
+     alternatif.`no_ktp` AS alternatif_no_ktp,
+     alternatif.`nama_warga` AS alternatif_nama_warga,
+     alternatif.`id_staff` AS alternatif_id_staff,
+     alternatif.`nama_staff` AS alternatif_nama_staff,
+     alternatif.`golongan` AS alternatif_golongan,
+     alternatif_sub.`id` AS alternatif_sub_id,
+     alternatif_sub.`id_alternatif` AS alternatif_sub_id_alternatif,
+     alternatif_sub.`id_kriteria` AS alternatif_sub_id_kriteria,
+     alternatif_sub.`nilai_bobot` AS alternatif_sub_nilai_bobot,
+     hasil.`id` AS hasil_id,
+     hasil.`tanggal` AS hasil_tanggal,
+     hasil.`id_staff` AS hasil_id_staff,
+     hasil.`nama_staff` AS hasil_nama_staff,
+     hasil_rangking.`id_rangking` AS hasil_rangking_id_rangking,
+     hasil_rangking.`id_hasil` AS hasil_rangking_id_hasil,
+     hasil_rangking.`nama` AS hasil_rangking_nama,
+     hasil_rangking.`nilaiV` AS hasil_rangking_nilaiV,
+     hasil_rangking.`rangking` AS hasil_rangking_rangking,
+     warga.`nama` AS warga_nama,
+     warga.`agama` AS warga_agama,
+     warga.`no_hp` AS warga_no_hp,
+     warga.`jenis_kelamin` AS warga_jenis_kelamin,
+     warga.`t_lahir` AS warga_t_lahir,
+     warga.`tanggal_lahir` AS warga_tanggal_lahir,
+     warga.`rt` AS warga_rt,
+     warga.`alamat` AS warga_alamat
+FROM
+     `alternatif` alternatif INNER JOIN `alternatif_sub` alternatif_sub ON alternatif.`id` = alternatif_sub.`id_alternatif`
+     INNER JOIN `warga` warga ON alternatif.`no_ktp` = warga.`no_ktp`
+     INNER JOIN `hasil_rangking` hasil_rangking ON warga.`no_ktp` = hasil_rangking.`no_ktp`
+     INNER JOIN `hasil` hasil ON hasil_rangking.`id_hasil` = hasil.`id`]]>
+	</queryString>
+	<field name="alternatif_id" class="java.lang.Integer"/>
+	<field name="alternatif_no_ktp" class="java.lang.Long"/>
+	<field name="alternatif_nama_warga" class="java.lang.String"/>
+	<field name="alternatif_id_staff" class="java.lang.Integer"/>
+	<field name="alternatif_nama_staff" class="java.lang.String"/>
+	<field name="alternatif_golongan" class="java.lang.String"/>
+	<field name="alternatif_sub_id" class="java.lang.Integer"/>
+	<field name="alternatif_sub_id_alternatif" class="java.lang.Integer"/>
+	<field name="alternatif_sub_id_kriteria" class="java.lang.Integer"/>
+	<field name="alternatif_sub_nilai_bobot" class="java.lang.Integer"/>
+	<field name="hasil_id" class="java.lang.Integer"/>
+	<field name="hasil_tanggal" class="java.sql.Timestamp"/>
+	<field name="hasil_id_staff" class="java.lang.Integer"/>
+	<field name="hasil_nama_staff" class="java.lang.String"/>
+	<field name="hasil_rangking_id_rangking" class="java.lang.Long"/>
+	<field name="hasil_rangking_id_hasil" class="java.lang.Integer"/>
+	<field name="hasil_rangking_nama" class="java.lang.String"/>
+	<field name="hasil_rangking_nilaiV" class="java.lang.Double"/>
+	<field name="hasil_rangking_rangking" class="java.lang.Integer"/>
+	<field name="warga_nama" class="java.lang.String"/>
+	<field name="warga_agama" class="java.lang.String"/>
+	<field name="warga_no_hp" class="java.lang.Long"/>
+	<field name="warga_jenis_kelamin" class="java.lang.String"/>
+	<field name="warga_t_lahir" class="java.lang.String"/>
+	<field name="warga_tanggal_lahir" class="java.sql.Date"/>
+	<field name="warga_rt" class="java.lang.String"/>
+	<field name="warga_alamat" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="230" splitType="Stretch">
+			<image>
+				<reportElement x="15" y="17" width="77" height="94" uuid="c4e557f9-1bb2-4005-9717-b6fcb8723676"/>
+				<imageExpression><![CDATA["C:\\Users\\zaeha\\Downloads\\toppng.com-logo-depok-336x397 (1).jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="103" y="67" width="346" height="20" uuid="37fad189-7301-41c8-84e5-2171b4ea2343"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[KECAMATAN PANCORAN MAS]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="454" y="2" width="100" height="20" uuid="eb27a2ce-1df1-4f5c-8c16-afb2afeb4dc0"/>
+			</rectangle>
+			<textField>
+				<reportElement x="500" y="2" width="54" height="20" uuid="621de99c-640b-4daf-8a0d-27aa597d8b50"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hasil_id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="226" y="107" width="100" height="16" uuid="a8fff56b-a552-49ff-941e-e50c55627c33"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Kode Pos 16436]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-1" y="136" width="555" height="1" uuid="db2026aa-f1de-4428-ba3b-025dfa36e987"/>
+			</line>
+			<staticText>
+				<reportElement x="103" y="44" width="346" height="23" uuid="c22e04cb-ccf8-4fce-9e07-52fb09cd3cd9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KELURAHAN PANCORAN MAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="12" width="292" height="35" uuid="a92b711c-8125-45cb-ad03-5584757d472d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial Black" size="20"/>
+				</textElement>
+				<text><![CDATA[RUKUN WARGA 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="122" width="174" height="14" uuid="d143dd6e-742f-455c-9410-0a4396ee3f6a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<text><![CDATA[Sekretariat RW 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="123" width="146" height="14" uuid="a50dbca5-e628-4e48-8608-a3338b7bf5cc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial Black" size="9"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<text><![CDATA[Penilaian Individu Warga]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="454" y="2" width="45" height="20" uuid="54e1c322-d7a6-495f-acaa-fdde621742a9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<text><![CDATA[NO. ID :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="103" y="87" width="346" height="20" uuid="d2e65185-2eed-4795-ba37-37ddffe0c347"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[KOTA DEPOK]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="134" splitType="Stretch">
+			<staticText>
+				<reportElement x="327" y="1" width="96" height="20" uuid="06be2d82-8dbc-4095-8bb0-aff5c91c7076"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Total Warga]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="21" width="93" height="20" uuid="52df5bbf-08a8-4a6b-8b95-1f6e646ed4a7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Tanggal Penilaian]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="21" width="100" height="20" uuid="6e03ed21-893d-44a6-b485-565e24b0df25"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hasil_nama_staff}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="21" width="115" height="20" uuid="60b9fe61-d25e-4f84-b1f3-d500e8de039f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Nama Warga]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="1" width="100" height="20" uuid="1b7444b7-01f0-4b82-a16d-23f6cf183982"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hasil_id_staff}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="428" y="21" width="127" height="20" uuid="29790528-6762-4985-8500-4b64115323d5"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hasil_tanggal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="1" width="115" height="20" uuid="742cb54c-f156-4b50-996c-8dfd96a5040f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Nama Staff Penilaian]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="423" y="1" width="5" height="20" uuid="ea79f8fe-c0da-4455-beb3-a5467e52b042"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="115" y="21" width="5" height="20" uuid="4a040986-7a73-489d-92bc-c5385dccfbf2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="423" y="21" width="5" height="20" uuid="f6d03143-a936-4b31-a061-5a984a73bf51"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField evaluationTime="Page">
+				<reportElement x="428" y="1" width="127" height="20" uuid="a75cfe0d-72c1-4f1a-8c7e-e0b848b400fc"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{hasil_rangking_id_rangking_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="115" y="1" width="5" height="20" uuid="f6523055-63a9-4254-b202-b10e75d66737"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="41" width="115" height="20" uuid="b53debd1-f5f2-4c42-b106-d800d18ff6b3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[No.KTP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="61" width="115" height="20" uuid="8f36d18e-733b-462d-8c3b-db88cf436bb3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Tempat, Tanggal Lahir]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="81" width="115" height="20" uuid="a6b63052-7938-4fde-a6e6-73ef4c67027f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Alamat]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6829185c-6aba-4f3c-8848-33331f9a6ce1">
-	<property name="ireport.zoom" value="2.1435888100000033"/>
-	<property name="ireport.x" value="141"/>
+	<property name="ireport.zoom" value="1.7715610000000057"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
@@ -30,25 +30,57 @@ FROM
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="96" splitType="Stretch">
-			<staticText>
-				<reportElement style="Title" x="146" y="13" width="263" height="33" uuid="28b43b45-00ea-4f30-9628-1fdff6ebb689"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Tw Cen MT"/>
-				</textElement>
-				<text><![CDATA[DATA STAFF]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="SubTitle" x="77" y="46" width="400" height="22" uuid="36da4820-1033-4c33-84d8-c534a5687fcd"/>
-				<textElement textAlignment="Center">
-					<font fontName="Tw Cen MT"/>
-				</textElement>
-				<text><![CDATA[RW 15 KELURAHAN PANCORAN MAS, KOTA DEPOK]]></text>
-			</staticText>
+		<band height="153" splitType="Stretch">
 			<image>
-				<reportElement x="486" y="13" width="47" height="50" uuid="864e3c9c-03d6-43e8-82a5-0b3c6bcc19c9"/>
-				<imageExpression><![CDATA["C:\\Users\\zaeha\\Documents\\NetBeansProjects\\spk_bansos_rw15\\src\\image\\LogoDepok400x400.png"]]></imageExpression>
+				<reportElement x="19" y="40" width="60" height="70" uuid="996c93b1-4b67-481c-8834-6945865eef7a"/>
+				<imageExpression><![CDATA["C:\\Users\\zaeha\\Downloads\\toppng.com-logo-depok-336x397 (1).jpg"]]></imageExpression>
 			</image>
+			<staticText>
+				<reportElement x="0" y="138" width="174" height="14" uuid="1f5a2310-8714-489c-b5cf-3bed9a091ae0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Serif" size="10"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<text><![CDATA[Sekretariat RW 15]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="152" width="555" height="1" uuid="9ee7ab63-ed5a-4575-bf7e-283660e61906"/>
+			</line>
+			<staticText>
+				<reportElement x="93" y="12" width="358" height="35" uuid="f9a0e12e-03c4-4815-be40-330e6fb00392"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[STAFF BANTUAN SOSIAL RW15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="71" width="345" height="13" uuid="8ea15d10-9620-4d9b-97ee-ca1950e6c5b8"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Jl. Pitara Raya, Gg. Rukun 2 RT002/RW015, Kelurahan Pancoran Mas, ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="47" width="323" height="24" uuid="5a2d666c-2da6-4ef6-8d76-af726b280d76"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA STAFF RW 15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="84" width="345" height="13" uuid="d8f115da-41f6-4215-8c55-78fd0f1b7248"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Kecamatan Pancoran Mas, Kota Depok,  Provinsi Jawa Barat, Kode Pos 16436]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="97" width="345" height="13" uuid="02dc60f2-95a4-449f-9ffe-8df13e8ff6c7"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[Kode Pos 16436]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
@@ -63,98 +95,129 @@ FROM
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement style="Column header" x="0" y="19" width="92" height="15" uuid="97a9708b-355a-4b4d-a947-6a8a05099b4b"/>
-				<textElement>
-					<font fontName="Tw Cen MT"/>
+				<reportElement style="Column header" mode="Opaque" x="0" y="20" width="92" height="16" forecolor="#000000" backcolor="#00FFCC" uuid="97a9708b-355a-4b4d-a947-6a8a05099b4b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
 				</textElement>
 				<text><![CDATA[ID STAFF]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="92" y="19" width="92" height="15" uuid="79c69484-6d11-4089-b236-05d5d39de0d1"/>
-				<textElement>
-					<font fontName="Tw Cen MT"/>
-				</textElement>
-				<text><![CDATA[NAMA STAFF]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="Column header" x="184" y="19" width="92" height="15" uuid="42adc4b7-2250-42de-9dc3-dd0dd5429d5c"/>
-				<textElement>
-					<font fontName="Tw Cen MT"/>
+				<reportElement style="Column header" mode="Opaque" x="217" y="19" width="92" height="17" forecolor="#000000" backcolor="#00FFCC" uuid="42adc4b7-2250-42de-9dc3-dd0dd5429d5c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
 				</textElement>
 				<text><![CDATA[ROLE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="276" y="20" width="122" height="15" uuid="df16986d-7b91-42ef-b910-fb9cfe842349"/>
-				<textElement>
-					<font fontName="Tw Cen MT"/>
+				<reportElement style="Column header" mode="Opaque" x="310" y="20" width="121" height="16" forecolor="#000000" backcolor="#00FFCC" uuid="df16986d-7b91-42ef-b910-fb9cfe842349"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
 				</textElement>
 				<text><![CDATA[NO. HP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="398" y="21" width="122" height="15" uuid="de76b7c5-cc9a-4ea6-bac6-72bda12495fa"/>
-				<textElement>
-					<font fontName="Tw Cen MT"/>
+				<reportElement style="Column header" mode="Opaque" x="433" y="20" width="122" height="15" forecolor="#000000" backcolor="#00FFCC" uuid="de76b7c5-cc9a-4ea6-bac6-72bda12495fa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
 				</textElement>
 				<text><![CDATA[LOKASI TUGAS]]></text>
 			</staticText>
+			<staticText>
+				<reportElement style="Column header" mode="Opaque" x="93" y="20" width="124" height="16" forecolor="#000000" backcolor="#00FFCC" uuid="79c69484-6d11-4089-b236-05d5d39de0d1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[NAMA STAFF]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="19" width="555" height="1" uuid="8fabe258-d7b8-400a-813b-54b6a38216c2"/>
+			</line>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="38" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="92" height="20" uuid="ae0fec62-b033-4e04-8b15-5a7879c5e4f0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{staff_rw_id}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="92" y="0" width="92" height="20" uuid="f5d1c1ca-744f-43b6-91aa-bbd9270552f3"/>
+				<reportElement x="92" y="0" width="125" height="20" uuid="f5d1c1ca-744f-43b6-91aa-bbd9270552f3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{staff_rw_nama}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="184" y="0" width="92" height="20" uuid="e9df924f-040a-40c8-92f3-a7481ec40bb8"/>
+				<reportElement x="217" y="0" width="92" height="20" uuid="e9df924f-040a-40c8-92f3-a7481ec40bb8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{staff_rw_role}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="276" y="0" width="122" height="20" uuid="c0ced83a-87b6-432b-8e10-bb0751885a7b"/>
+				<reportElement x="309" y="0" width="122" height="20" uuid="c0ced83a-87b6-432b-8e10-bb0751885a7b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{staff_rw_no_hp}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="398" y="0" width="122" height="20" uuid="1020fcb2-81ee-472e-acac-63ab93ba73e4"/>
+				<reportElement x="431" y="0" width="124" height="20" uuid="1020fcb2-81ee-472e-acac-63ab93ba73e4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{staff_rw_lokasi}]]></textFieldExpression>
 			</textField>
+			<line>
+				<reportElement x="0" y="19" width="555" height="1" uuid="1279ed47-744f-4096-9554-2c01bf121c8b"/>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="ca215b13-a11b-4508-8395-1e41cd62e8d1"/>
+			</line>
+			<line>
+				<reportElement x="555" y="-16" width="1" height="36" uuid="7c270c11-0d87-4efa-8aec-7fe45043c16f"/>
+			</line>
+			<line>
+				<reportElement x="431" y="-17" width="1" height="36" uuid="8f17dd7e-c252-4aae-b50d-af3741094455"/>
+			</line>
+			<line>
+				<reportElement x="310" y="-15" width="1" height="35" uuid="356cc459-106f-442f-bf58-590ba7bb729e"/>
+			</line>
+			<line>
+				<reportElement x="217" y="-16" width="1" height="36" uuid="f740f445-cb6b-4657-a71d-e4a6fe160b0c"/>
+			</line>
+			<line>
+				<reportElement x="92" y="-15" width="1" height="35" uuid="16df3096-d198-46da-82ed-f4460872a4f9"/>
+			</line>
+			<line>
+				<reportElement x="0" y="-16" width="1" height="36" uuid="e2d87748-9700-4ae8-8a2c-9d0e7c582178"/>
+			</line>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="78e48680-f26c-432e-bf82-2b0fd58b88f8"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#999999"/>
-				</graphicElement>
-			</line>
-		</band>
+		<band height="45" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="20" splitType="Stretch">
+		<band height="139" splitType="Stretch">
+			<staticText>
+				<reportElement x="409" y="119" width="147" height="20" uuid="b15cd9a4-ea8e-45bf-9ae3-b0131832f2e1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Samsudin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="20" width="147" height="20" uuid="53af4cf3-efb5-4e0c-af37-a2816c6bfa32"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Mengetahui Ketua RW,]]></text>
+			</staticText>
 			<textField>
-				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="8ed57ba1-e213-4e0f-a05c-3943fd5085b3"/>
-				<textElement textAlignment="Right">
-					<font fontName="Tw Cen MT" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="26b47e8b-e3d6-4b9a-9133-1ef3349a071b"/>
-				<textElement>
-					<font fontName="Tw Cen MT" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="c697a2a3-f430-4e70-8be2-403a7ea3bd26"/>
-				<textElement>
-					<font fontName="Tw Cen MT" size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				<reportElement x="408" y="0" width="147" height="20" uuid="944884b1-c850-4445-aed4-ead9debce4fe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Depok, "+new SimpleDateFormat("EEEE dd MMMM yyyy", new java.util.Locale("id")).format(new Date())]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
