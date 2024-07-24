@@ -8,6 +8,8 @@ package popUp;
 import database.koneksi;
 import gui.DataAlternatifPage;
 import gui.RangkingSpkPage;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.sql.*;
 import javax.swing.table.DefaultTableModel;
@@ -34,6 +36,7 @@ public class popUpAlternatif extends javax.swing.JFrame {
         initComponents();
         dataTable();
         setLocationRelativeTo(this);
+        tfCari.requestFocus();
 
     }
 
@@ -52,17 +55,21 @@ public class popUpAlternatif extends javax.swing.JFrame {
             // Bersihkan baris yang ada
             tabmodeAlt.setRowCount(0);
         }
-
+        String isiTeks = tfCari.getText().trim();
         // Query untuk mendapatkan data kriteria
         String queryKriteria = "SELECT nama_kriteria FROM kriteria";
         // Query untuk mendapatkan data alternatif dan bobot
+        String golonganString = "Tidak Mampu";
         String queryData = "SELECT a.id, a.no_ktp, a.nama_warga, a.id_staff, a.nama_staff, a.golongan, "
                 + "GROUP_CONCAT(asub.nilai_bobot ORDER BY asub.id_kriteria) AS nilai_bobot "
                 + "FROM alternatif a "
                 + "JOIN alternatif_sub asub ON a.id = asub.id_alternatif "
-                + "WHERE a.golongan = 'tidak mampu' "
+                + "WHERE (a.id LIKE '%" + isiTeks + "%' OR a.no_ktp LIKE '%" + isiTeks + "%' OR a.nama_warga LIKE '%" + isiTeks + "%') "
+                + "AND a.golongan = '" + golonganString + "' "
                 + "GROUP BY a.id, a.no_ktp, a.nama_warga, a.id_staff, a.nama_staff, a.golongan "
                 + "ORDER BY a.id";
+
+        System.out.println("Query SQL yang digunakan: " + queryData);
 
         try (PreparedStatement stmtKriteria = conn.prepareStatement(queryKriteria);
                 ResultSet rsKriteria = stmtKriteria.executeQuery();
@@ -128,14 +135,25 @@ public class popUpAlternatif extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblBobot = new javax.swing.JTable();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
 
-        jLabel1.setFont(new java.awt.Font("Tw Cen MT", 0, 48)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tw Cen MT", 1, 48)); // NOI18N
         jLabel1.setText("DATA ALTERNATIF");
 
+        tfCari.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+        tfCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfCariActionPerformed(evt);
+            }
+        });
+
+        jButton1.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         jButton1.setText("Cari");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -143,8 +161,10 @@ public class popUpAlternatif extends javax.swing.JFrame {
             }
         });
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, java.awt.Color.gray, java.awt.Color.gray));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Alternatif Warga", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
 
+        tblAlt.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         tblAlt.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -180,8 +200,10 @@ public class popUpAlternatif extends javax.swing.JFrame {
                 .addGap(0, 30, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, java.awt.Color.gray, java.awt.Color.gray));
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Penilaian Warga", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
 
+        tblBobot.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         tblBobot.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -217,6 +239,17 @@ public class popUpAlternatif extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        jButton2.setBackground(new java.awt.Color(255, 102, 102));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/icons8-close-32.png"))); // NOI18N
+        jButton2.setMaximumSize(new java.awt.Dimension(30, 30));
+        jButton2.setMinimumSize(new java.awt.Dimension(30, 30));
+        jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -226,37 +259,35 @@ public class popUpAlternatif extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(64, 64, 64)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(777, Short.MAX_VALUE)
-                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jButton1)
-                    .addContainerGap()))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jLabel1)
-                .addGap(53, 53, 53)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(141, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton1))
-                    .addContainerGap(657, Short.MAX_VALUE)))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -269,9 +300,7 @@ public class popUpAlternatif extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -317,17 +346,42 @@ public class popUpAlternatif extends javax.swing.JFrame {
         String bobotValuesStr = bobotValues.toString();
 
         // Menampilkan nilai bobot (atau melakukan sesuatu dengan nilai ini)
-        JOptionPane.showMessageDialog(this, "Nilai bobot: " + bobotValuesStr);
+        JOptionPane.showMessageDialog(this, "Data berhasil ditambah");
 
         // Panggil metode untuk mendapatkan alternatif berdasarkan no_ktp, nama, dan bobotValuesStr
         alternatif.getAlternatif(no_ktp, nama, bobotValuesStr);
-        
+
 
     }//GEN-LAST:event_tblAltMouseClicked
 
     private void tblBobotMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBobotMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tblBobotMouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        Timer timer = new Timer(50, null);
+        timer.addActionListener(new ActionListener() {
+            private float opacity = 1.0f;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                opacity -= 0.1f;
+                if (opacity <= 0) {
+                    timer.stop();
+                    dispose();
+                } else {
+                    setOpacity(Math.max(opacity, 0));
+                }
+            }
+        });
+        timer.start();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void tfCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCariActionPerformed
+        // TODO add your handling code here:
+        dataTable();
+    }//GEN-LAST:event_tfCariActionPerformed
 
     /**
      * @param args the command line arguments
@@ -367,6 +421,7 @@ public class popUpAlternatif extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
