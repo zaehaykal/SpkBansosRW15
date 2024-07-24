@@ -5,9 +5,12 @@
  */
 package gui;
 
+import data.LoginData;
 import database.koneksi;
 import static gui.DataWargaPage.convertUtilDateToSqlDate;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -25,6 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import popUp.popUpWarga;
 
@@ -40,6 +44,7 @@ public class DataAlternatifPage extends javax.swing.JFrame {
     DecimalFormat df = new DecimalFormat("#.#####");
     int jmlKriteria = 0;
     int[] kriteria;
+    LoginData Id = new LoginData();
 
     /**
      * Creates new form DataAlternatif
@@ -51,6 +56,9 @@ public class DataAlternatifPage extends javax.swing.JFrame {
         dataTable();
         autoID();
         nonEditableTf();
+        setLocationRelativeTo(this);
+        tfNamaStaff.setText(Id.getNama_login().toString());
+        tfIdStaff.setText(Id.getId_login().toString());
 //        keyListner();
         // Tambahkan KeyListener ke tfNik
 
@@ -58,15 +66,17 @@ public class DataAlternatifPage extends javax.swing.JFrame {
 
     protected void nonEditableTf() {
         tfId.setEditable(false);
+        tfIdStaff.setEditable(false);
+        tfNamaStaff.setEditable(false);
     }
 
     protected void fieldKosong() {
-        tfIdStaff.setText("");
         tfNama.setText("");
         tfNik.setText("");
         tfTTL.setText("");
         tfTLahir.setText("");
         resetComboBoxes();
+        autoID();
     }
 
     protected void autoID() {
@@ -108,47 +118,52 @@ public class DataAlternatifPage extends javax.swing.JFrame {
     }
 
     private void deleteAlternatifById(int id) {
-        String deleteAlternatifSubQuery = "DELETE FROM alternatif_sub WHERE id_alternatif = ?";
-        String deleteAlternatifQuery = "DELETE FROM alternatif WHERE id = ?";
+        int option = JOptionPane.showConfirmDialog(null, "Yakin ?", "Hapus '" + tfNama.getText() + "' ", JOptionPane.YES_NO_OPTION);
+        if (option == 0) {
+            String deleteAlternatifSubQuery = "DELETE FROM alternatif_sub WHERE id_alternatif = ?";
+            String deleteAlternatifQuery = "DELETE FROM alternatif WHERE id = ?";
 
-        try (PreparedStatement deleteAlternatifSubStmt = conn.prepareStatement(deleteAlternatifSubQuery);
-                PreparedStatement deleteAlternatifStmt = conn.prepareStatement(deleteAlternatifQuery)) {
+            try (PreparedStatement deleteAlternatifSubStmt = conn.prepareStatement(deleteAlternatifSubQuery);
+                    PreparedStatement deleteAlternatifStmt = conn.prepareStatement(deleteAlternatifQuery)) {
 
-            // Mulai transaksi
-            conn.setAutoCommit(false);
+                // Mulai transaksi
+                conn.setAutoCommit(false);
 
-            // Hapus entri dari tabel alternatif_sub
-            deleteAlternatifSubStmt.setInt(1, id);
-            deleteAlternatifSubStmt.executeUpdate();
+                // Hapus entri dari tabel alternatif_sub
+                deleteAlternatifSubStmt.setInt(1, id);
+                deleteAlternatifSubStmt.executeUpdate();
 
-            // Hapus entri dari tabel alternatif
-            deleteAlternatifStmt.setInt(1, id);
-            deleteAlternatifStmt.executeUpdate();
+                // Hapus entri dari tabel alternatif
+                deleteAlternatifStmt.setInt(1, id);
+                deleteAlternatifStmt.executeUpdate();
 
-            // Commit transaksi
-            conn.commit();
-            JOptionPane.showMessageDialog(null, "Data berhasil dihapus.");
+                // Commit transaksi
+                conn.commit();
+                JOptionPane.showMessageDialog(null, "Data berhasil dihapus.");
 
-            // Refresh tabel setelah penghapusan
-            dataTable();
+                // Refresh tabel setelah penghapusan
+                dataTable();
+                fieldKosong();
 
-        } catch (SQLException e) {
-            try {
-                // Rollback transaksi jika terjadi kesalahan
-                conn.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            JOptionPane.showMessageDialog(null, "Gagal menghapus data: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                // Kembali ke autocommit mode
-                conn.setAutoCommit(true);
             } catch (SQLException e) {
+                try {
+                    // Rollback transaksi jika terjadi kesalahan
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                JOptionPane.showMessageDialog(null, "Gagal menghapus data: " + e.getMessage());
                 e.printStackTrace();
+            } finally {
+                try {
+                    // Kembali ke autocommit mode
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
     }
 
     private void deleteSelectedAlternatif() {
@@ -308,13 +323,14 @@ public class DataAlternatifPage extends javax.swing.JFrame {
             try {
                 // Calculate total score for golongan
                 int totalScore = 0;
-                for (int i = 1; i <= 5; i++) {
+                for (int i = 1; i <= 7; i++) {
                     JComboBox comboBox = getComboBox(i);
                     totalScore += comboBox.getSelectedIndex() + 1; // Sum the indices (adding 1 because indices start at 0)
                 }
+                double threshold = 0.8 * 27;
 
                 String golongan;
-                if (totalScore >= 20) {
+                if (totalScore >= threshold) {
                     golongan = "Mampu";
                 } else {
                     golongan = "Tidak Mampu";
@@ -371,6 +387,7 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 } else {
                     JOptionPane.showMessageDialog(null, "Gagal menyimpan data ke dalam tabel alternatif");
                 }
+                fieldKosong();
                 autoID(); // Call method to generate auto ID after saving data
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, "Data gagal disimpan!");
@@ -381,91 +398,93 @@ public class DataAlternatifPage extends javax.swing.JFrame {
     }
 
     private void updateData() {
-    if (tfNik.getText().isEmpty() || tfNama.getText().isEmpty() || tfIdStaff.getText().isEmpty() || tfNamaStaff.getText().isEmpty() || cbBoxC1.getSelectedItem() == null || jComboBox2.getSelectedItem() == null || jComboBox3.getSelectedItem() == null || jComboBox4.getSelectedItem() == null || jComboBox5.getSelectedItem() == null) {
-        JOptionPane.showMessageDialog(null, "Harap masukkan semua data");
-    } else if (tfNik.getText().length() < 8 || tfNik.getText().length() > 16) {
-        JOptionPane.showMessageDialog(null, "ID Staff harus antara 8 hingga 16 karakter");
-    } else {
-        try {
-            conn.setAutoCommit(false); // Mulai transaksi
+        if (tfNik.getText().isEmpty() || tfNama.getText().isEmpty() || tfIdStaff.getText().isEmpty() || tfNamaStaff.getText().isEmpty() || cbBoxC1.getSelectedItem() == null || jComboBox2.getSelectedItem() == null || jComboBox3.getSelectedItem() == null || jComboBox4.getSelectedItem() == null || jComboBox5.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(null, "Harap masukkan semua data");
+        } else if (tfNik.getText().length() < 8 || tfNik.getText().length() > 16) {
+            JOptionPane.showMessageDialog(null, "ID Staff harus antara 8 hingga 16 karakter");
+        } else {
+            try {
+                conn.setAutoCommit(false); // Mulai transaksi
 
-            // Calculate total score for golongan
-            int totalScore = 0;
-            for (int i = 1; i <= 5; i++) {
-                JComboBox comboBox = getComboBox(i);
-                totalScore += comboBox.getSelectedIndex() + 1; // Sum the indices (adding 1 because indices start at 0)
-            }
-
-            String golongan;
-            if (totalScore >= 25) {
-                golongan = "Mampu";
-            } else {
-                golongan = "Tidak Mampu";
-            }
-
-            // Dapatkan id_alternatif dari tfId
-            int idAlternatif = Integer.parseInt(tfId.getText());
-
-            // Update 'alternatif_sub' table
-            String sqlUpdateSub = "UPDATE alternatif_sub SET nilai_bobot = ? WHERE id_alternatif = ? AND id_kriteria = ?";
-            boolean success = true;
-
-            for (int i = 1; i <= jmlKriteria; i++) {
-                try (PreparedStatement statUpdateSub = conn.prepareStatement(sqlUpdateSub)) {
+                // Calculate total score for golongan
+                int totalScore = 0;
+                for (int i = 1; i <= 5; i++) {
                     JComboBox comboBox = getComboBox(i);
-                    statUpdateSub.setInt(1, comboBox.getSelectedIndex() + 1); // Set nilai bobot (selected index + 1 because index starts at 0)
-                    statUpdateSub.setInt(2, idAlternatif); // Set id_alternatif
-                    statUpdateSub.setInt(3, i); // Set ID Kriteria (using the order number)
+                    totalScore += comboBox.getSelectedIndex() + 1; // Sum the indices (adding 1 because indices start at 0)
+                }
+                double threshold = 0.8 * 27;
 
-                    int updateResult = statUpdateSub.executeUpdate();
-                    if (updateResult <= 0) {
-                        success = false;
-                        break;
+                String golongan;
+                if (totalScore >= threshold) {
+                    golongan = "Mampu";
+                } else {
+                    golongan = "Tidak Mampu";
+                }
+
+                // Dapatkan id_alternatif dari tfId
+                int idAlternatif = Integer.parseInt(tfId.getText());
+
+                // Update 'alternatif_sub' table
+                String sqlUpdateSub = "UPDATE alternatif_sub SET nilai_bobot = ? WHERE id_alternatif = ? AND id_kriteria = ?";
+                boolean success = true;
+
+                for (int i = 1; i <= jmlKriteria; i++) {
+                    try (PreparedStatement statUpdateSub = conn.prepareStatement(sqlUpdateSub)) {
+                        JComboBox comboBox = getComboBox(i);
+                        statUpdateSub.setInt(1, comboBox.getSelectedIndex() + 1); // Set nilai bobot (selected index + 1 because index starts at 0)
+                        statUpdateSub.setInt(2, idAlternatif); // Set id_alternatif
+                        statUpdateSub.setInt(3, i); // Set ID Kriteria (using the order number)
+
+                        int updateResult = statUpdateSub.executeUpdate();
+                        if (updateResult <= 0) {
+                            success = false;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (success) {
-                // Update 'alternatif' table
-                String sqlUpdateAlternatif = "UPDATE alternatif SET id_staff = ?, nama_staff = ?, golongan = ? WHERE id = ?";
-                try (PreparedStatement statUpdateAlternatif = conn.prepareStatement(sqlUpdateAlternatif)) {
-                    statUpdateAlternatif.setString(1, tfIdStaff.getText()); // Set id_staff
-                    statUpdateAlternatif.setString(2, tfNamaStaff.getText()); // Set nama_staff
-                    statUpdateAlternatif.setString(3, golongan); // Set golongan
-                    statUpdateAlternatif.setInt(4, idAlternatif); // Set id (key for update)
+                if (success) {
+                    // Update 'alternatif' table
+                    String sqlUpdateAlternatif = "UPDATE alternatif SET id_staff = ?, nama_staff = ?, golongan = ? WHERE id = ?";
+                    try (PreparedStatement statUpdateAlternatif = conn.prepareStatement(sqlUpdateAlternatif)) {
+                        statUpdateAlternatif.setString(1, tfIdStaff.getText()); // Set id_staff
+                        statUpdateAlternatif.setString(2, tfNamaStaff.getText()); // Set nama_staff
+                        statUpdateAlternatif.setString(3, golongan); // Set golongan
+                        statUpdateAlternatif.setInt(4, idAlternatif); // Set id (key for update)
 
-                    int iUpdateAlternatif = statUpdateAlternatif.executeUpdate();
-                    if (iUpdateAlternatif > 0) {
-                        conn.commit(); // Commit transaction
-                        JOptionPane.showMessageDialog(null, "Data berhasil diperbarui");
-                        // Call method to retrieve nilai bobot after successful update
-                        dataTable();
-                    } else {
+                        int iUpdateAlternatif = statUpdateAlternatif.executeUpdate();
+                        if (iUpdateAlternatif > 0) {
+                            conn.commit(); // Commit transaction
+                            JOptionPane.showMessageDialog(null, "Data berhasil diperbarui");
+                            // Call method to retrieve nilai bobot after successful update
+                            dataTable();
+                        } else {
+                            conn.rollback(); // Rollback transaction in case of failure
+                            JOptionPane.showMessageDialog(null, "Gagal memperbarui data di tabel alternatif");
+                        }
+                    } catch (SQLException e) {
                         conn.rollback(); // Rollback transaction in case of failure
-                        JOptionPane.showMessageDialog(null, "Gagal memperbarui data di tabel alternatif");
+                        JOptionPane.showMessageDialog(null, "Data gagal diperbarui!");
+                        System.out.println(e);
+                        e.printStackTrace();
                     }
-                } catch (SQLException e) {
+                } else {
                     conn.rollback(); // Rollback transaction in case of failure
-                    JOptionPane.showMessageDialog(null, "Data gagal diperbarui!");
-                    System.out.println(e);
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Gagal memperbarui data di tabel alternatif_sub");
                 }
-            } else {
-                conn.rollback(); // Rollback transaction in case of failure
-                JOptionPane.showMessageDialog(null, "Gagal memperbarui data di tabel alternatif_sub");
+                fieldKosong();
+                autoID();
+                conn.setAutoCommit(true); // Reset to default auto-commit behavior
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Data gagal diperbarui!");
+                System.out.println(e);
+                e.printStackTrace();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "ID Alternatif tidak valid!");
+                e.printStackTrace();
             }
-
-            conn.setAutoCommit(true); // Reset to default auto-commit behavior
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Data gagal diperbarui!");
-            System.out.println(e);
-            e.printStackTrace();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "ID Alternatif tidak valid!");
-            e.printStackTrace();
         }
     }
-}
 
     private void klikMouse() {
         int row = tblAlt.getSelectedRow();
@@ -662,10 +681,16 @@ public class DataAlternatifPage extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Penilaian Alternatif");
-        setMaximumSize(new java.awt.Dimension(1903, 815));
-        setMinimumSize(new java.awt.Dimension(1903, 815));
+        setMaximumSize(new java.awt.Dimension(984, 1018));
+        setMinimumSize(new java.awt.Dimension(984, 1018));
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
+        jPanel1.setMaximumSize(new java.awt.Dimension(984, 1018));
+        jPanel1.setMinimumSize(new java.awt.Dimension(984, 1018));
+        jPanel1.setPreferredSize(new java.awt.Dimension(984, 1018));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Warga", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
@@ -681,6 +706,8 @@ public class DataAlternatifPage extends javax.swing.JFrame {
 
         jTLahir.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         jTLahir.setText("Tanggal Lahir");
+
+        tfId.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
 
         tfCariWarga.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         tfCariWarga.setText("Get ID");
@@ -701,11 +728,18 @@ public class DataAlternatifPage extends javax.swing.JFrame {
         jTtl.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         jTtl.setText("Tempat Lahir");
 
+        tfNik.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         tfNik.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tfNikKeyReleased(evt);
             }
         });
+
+        tfNama.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+
+        tfTLahir.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+
+        tfTTL.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -713,36 +747,31 @@ public class DataAlternatifPage extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jTLahir, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfTTL, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jTtl, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfTLahir, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jNama, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfNama))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jIdAlt, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jNoKTP, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(tfId, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                            .addComponent(tfNik))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jNama, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tfNama, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jIdAlt, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jNoKTP, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tfId, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(tfNik, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnGetId)
-                            .addComponent(tfCariWarga)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jTLahir, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tfTTL, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jTtl, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tfTLahir, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(btnGetId)
+                    .addComponent(tfCariWarga))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -778,8 +807,11 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 .addContainerGap(39, Short.MAX_VALUE))
         );
 
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
+
         jButton1.setBackground(new java.awt.Color(255, 153, 153));
-        jButton1.setText("jButton1");
+        jButton1.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/icons8-close-32.png"))); // NOI18N
         jButton1.setMaximumSize(new java.awt.Dimension(150, 50));
         jButton1.setMinimumSize(new java.awt.Dimension(150, 50));
         jButton1.setPreferredSize(new java.awt.Dimension(150, 50));
@@ -788,9 +820,10 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 20, 30, 30));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Warga", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 0, 16))); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Alternatif", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
 
         tblBobot.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
         tblBobot.setModel(new javax.swing.table.DefaultTableModel(
@@ -848,31 +881,32 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(5, 5, 5)
-                        .addComponent(jScrollPane1))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(cari)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 502, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cari))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(58, 58, 58))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 570, 920, 430));
+
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanel4.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
 
         jButton5.setBackground(new java.awt.Color(255, 102, 102));
@@ -906,9 +940,8 @@ public class DataAlternatifPage extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
+                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -919,6 +952,8 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
+
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 490, 440, -1));
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Input Alternatif Bobot", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
@@ -990,7 +1025,7 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(C5lbl, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                            .addComponent(C5lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(C4lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(C6lbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(15, 15, 15)
@@ -1048,6 +1083,8 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 110, 470, 370));
+
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Data Staff", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tw Cen MT", 1, 16))); // NOI18N
 
@@ -1058,6 +1095,11 @@ public class DataAlternatifPage extends javax.swing.JFrame {
         jLabel234.setText("Nama");
 
         tfIdStaff.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
+        tfIdStaff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfIdStaffActionPerformed(evt);
+            }
+        });
 
         tfNamaStaff.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
 
@@ -1071,10 +1113,9 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                     .addComponent(jLa1231)
                     .addComponent(jLabel234))
                 .addGap(72, 72, 72)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tfNamaStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfIdStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tfIdStaff, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                    .addComponent(tfNamaStaff)))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1090,10 +1131,13 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 360, 448, 120));
+
+        jLabel1.setFont(new java.awt.Font("Tw Cen MT", 1, 48)); // NOI18N
         jLabel1.setText("Data Alternatif");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, -1));
 
         jPanel7.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         jButton4.setBackground(new java.awt.Color(204, 255, 204));
         jButton4.setFont(new java.awt.Font("Tw Cen MT", 1, 16)); // NOI18N
@@ -1126,7 +1170,7 @@ public class DataAlternatifPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1140,79 +1184,43 @@ public class DataAlternatifPage extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(872, 872, 872)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(101, 101, 101)
-                .addComponent(jLabel1)
-                .addGap(79, 79, 79)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(197, 197, 197))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(263, 263, 263))))
-        );
+        jPanel1.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 490, 470, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 9, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 770, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1018, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        dispose();
+        Timer timer = new Timer(50, null);
+        timer.addActionListener(new ActionListener() {
+            private float opacity = 1.0f;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                opacity -= 0.1f;
+                if (opacity <= 0) {
+                    timer.stop();
+                    dispose();
+                } else {
+                    setOpacity(Math.max(opacity, 0));
+                }
+            }
+        });
+        timer.start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void tfCariWargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCariWargaActionPerformed
@@ -1266,6 +1274,10 @@ public class DataAlternatifPage extends javax.swing.JFrame {
     private void tfCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCariActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfCariActionPerformed
+
+    private void tfIdStaffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfIdStaffActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfIdStaffActionPerformed
 
     /**
      * @param args the command line arguments
