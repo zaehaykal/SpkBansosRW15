@@ -7,6 +7,8 @@ package gui;
 
 import data.LoginData;
 import database.koneksi;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import javax.swing.*;
 
@@ -26,12 +28,25 @@ public class DashboardPage extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(this);
         conn = koneksi.kon();
-        userName.setText(Id.getNama_login().toString() + "!");
+        userName.setText(Id.getNama_login().toString() + "!"); 
         System.out.println(Id.getId_login());
         System.out.println(Id.getIzin_login());
         System.out.println(Id.getIzin_login());
+        setButtonVisibility();
 
     }
+    
+    private void setButtonVisibility() {
+        String izin = Id.getIzin_login();
+        if (izin.equals("Staff")) {
+            btnKriterian1.setVisible(false);
+            btnKriterian.setVisible(false);
+        } else if (izin.equals("Ketua")) {
+            btnKriterian1.setVisible(true);
+            btnKriterian.setVisible(true);
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,6 +57,8 @@ public class DashboardPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel3 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -54,47 +71,68 @@ public class DashboardPage extends javax.swing.JFrame {
         btnKriterian = new javax.swing.JButton();
         btnAlternatif = new javax.swing.JButton();
         btnSPK = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         btnKriterian1 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(1000, 900));
-        setPreferredSize(new java.awt.Dimension(1000, 824));
+        setTitle("Halaman Dashboard");
+        setMinimumSize(new java.awt.Dimension(1000, 800));
+        setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(1000, 831));
         getContentPane().setLayout(null);
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButton2.setBackground(new java.awt.Color(255, 102, 102));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/icons8-close-32.png"))); // NOI18N
+        jButton2.setMaximumSize(new java.awt.Dimension(30, 30));
+        jButton2.setMinimumSize(new java.awt.Dimension(30, 30));
+        jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 10, -1, -1));
+
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
         jPanel1.setLayout(null);
 
         jLabel5.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/LogoDepok400x400.png"))); // NOI18N
         jPanel1.add(jLabel5);
-        jLabel5.setBounds(375, 16, 300, 300);
+        jLabel5.setBounds(360, 20, 300, 300);
 
-        jLabel3.setFont(new java.awt.Font("Tw Cen MT", 0, 36)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tw Cen MT", 1, 36)); // NOI18N
         jLabel3.setText("SISTEM PENDUKUNG KEPUTUSAN");
         jPanel1.add(jLabel3);
-        jLabel3.setBounds(272, 325, 498, 40);
+        jLabel3.setBounds(250, 330, 560, 40);
 
         userName.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 24)); // NOI18N
         userName.setText("namaUser");
         jPanel1.add(userName);
-        userName.setBounds(539, 430, 110, 32);
+        userName.setBounds(530, 470, 240, 32);
 
-        jLabel4.setFont(new java.awt.Font("Tw Cen MT", 0, 36)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Tw Cen MT", 1, 36)); // NOI18N
         jLabel4.setText("UNTUK PENERIMAAN BANTUAN SOSIAL");
         jPanel1.add(jLabel4);
-        jLabel4.setBounds(229, 374, 586, 40);
+        jLabel4.setBounds(200, 380, 650, 40);
 
         jLabel6.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
         jLabel6.setText("Selamat Datang");
+        jLabel6.setMaximumSize(new java.awt.Dimension(157, 32));
+        jLabel6.setMinimumSize(new java.awt.Dimension(157, 32));
+        jLabel6.setPreferredSize(new java.awt.Dimension(157, 32));
         jPanel1.add(jLabel6);
-        jLabel6.setBounds(373, 435, 157, 27);
+        jLabel6.setBounds(360, 470, 157, 32);
 
-        jLabel7.setFont(new java.awt.Font("Tw Cen MT", 0, 36)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Tw Cen MT", 1, 36)); // NOI18N
         jLabel7.setText("RW 15");
         jPanel1.add(jLabel7);
-        jLabel7.setBounds(470, 470, 104, 40);
+        jLabel7.setBounds(460, 420, 98, 40);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -110,6 +148,7 @@ public class DashboardPage extends javax.swing.JFrame {
                 btnPendudukActionPerformed(evt);
             }
         });
+        jPanel2.add(btnPenduduk);
 
         btnKriterian.setBackground(new java.awt.Color(255, 204, 204));
         btnKriterian.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnKriteria.png"))); // NOI18N
@@ -121,6 +160,7 @@ public class DashboardPage extends javax.swing.JFrame {
                 btnKriterianActionPerformed(evt);
             }
         });
+        jPanel2.add(btnKriterian);
 
         btnAlternatif.setBackground(new java.awt.Color(204, 204, 0));
         btnAlternatif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnAlternatif.png"))); // NOI18N
@@ -132,6 +172,7 @@ public class DashboardPage extends javax.swing.JFrame {
                 btnAlternatifActionPerformed(evt);
             }
         });
+        jPanel2.add(btnAlternatif);
 
         btnSPK.setBackground(new java.awt.Color(153, 153, 255));
         btnSPK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnPenilaian.png"))); // NOI18N
@@ -141,10 +182,7 @@ public class DashboardPage extends javax.swing.JFrame {
                 btnSPKActionPerformed(evt);
             }
         });
-
-        jButton1.setBackground(new java.awt.Color(204, 204, 204));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnLaporan.png"))); // NOI18N
-        jButton1.setPreferredSize(new java.awt.Dimension(150, 100));
+        jPanel2.add(btnSPK);
 
         btnKriterian1.setBackground(new java.awt.Color(255, 204, 204));
         btnKriterian1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnStaff.png"))); // NOI18N
@@ -156,56 +194,36 @@ public class DashboardPage extends javax.swing.JFrame {
                 btnKriterian1ActionPerformed(evt);
             }
         });
+        jPanel2.add(btnKriterian1);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnPenduduk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSPK, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnKriterian, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnKriterian1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(21, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnAlternatif, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPenduduk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnKriterian, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAlternatif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnKriterian1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSPK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(35, Short.MAX_VALUE))
-        );
+        jButton1.setBackground(new java.awt.Color(204, 204, 204));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/btnLaporan.png"))); // NOI18N
+        jButton1.setPreferredSize(new java.awt.Dimension(150, 100));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton1);
 
         jPanel1.add(jPanel2);
-        jPanel2.setBounds(270, 530, 520, 260);
+        jPanel2.setBounds(260, 580, 520, 230);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/backDashboard.png"))); // NOI18N
+        jLabel1.setMaximumSize(new java.awt.Dimension(1000, 824));
+        jLabel1.setMinimumSize(new java.awt.Dimension(1000, 824));
+        jLabel1.setName(""); // NOI18N
+        jLabel1.setPreferredSize(new java.awt.Dimension(1000, 824));
         jPanel1.add(jLabel1);
-        jLabel1.setBounds(0, 0, 1010, 830);
+        jLabel1.setBounds(10, 10, 980, 800);
 
-        getContentPane().add(jPanel1);
-        jPanel1.setBounds(-2, 0, 1010, 850);
+        jPanel3.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 830));
+
+        getContentPane().add(jPanel3);
+        jPanel3.setBounds(0, 0, 1000, 830);
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPendudukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPendudukActionPerformed
@@ -231,8 +249,45 @@ public class DashboardPage extends javax.swing.JFrame {
 
     private void btnKriterian1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKriterian1ActionPerformed
         // TODO add your handling code here:
-        new DataStaffPage().setVisible(true);
+
+        if (Id.getIzin_login().equals("Staff")) {
+            JOptionPane.showMessageDialog(null, "Anda tidak memiliki izin untuk mengakses halaman ini.");
+        } else {
+            new DataStaffPage().setVisible(true);
+        }
+//
+
     }//GEN-LAST:event_btnKriterian1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        new CetakData().setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int option = JOptionPane.showConfirmDialog(null,
+                "Apakah Anda ingin Keluar ?", "LogOut!", JOptionPane.YES_NO_CANCEL_OPTION);
+        if (option == 0) {
+            Timer timer = new Timer(50, null);
+            timer.addActionListener(new ActionListener() {
+                private float opacity = 1.0f;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    opacity -= 0.1f;
+                    if (opacity <= 0) {
+                        timer.stop();
+                        dispose();
+                        new LoginPage().setVisible(true);
+                    } else {
+                        setOpacity(Math.max(opacity, 0));
+                    }
+                }
+            });
+            timer.start();
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -279,6 +334,7 @@ public class DashboardPage extends javax.swing.JFrame {
     private javax.swing.JButton btnPenduduk;
     private javax.swing.JButton btnSPK;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -287,6 +343,7 @@ public class DashboardPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel userName;
     // End of variables declaration//GEN-END:variables
 }
